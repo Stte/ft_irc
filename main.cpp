@@ -30,7 +30,7 @@ int main()
     struct addrinfo hints, *res; // look up i printed the struct for your understanding
     int status, sockfd, new_fd; // sock fd, new fd after there is a connection
 
-    
+
     // first, load up address structs with getaddrinfo():
 
     memset(&hints, 0, sizeof hints); // make sure the struct is empty
@@ -40,45 +40,47 @@ int main()
 
     // get ready to connect
     // res now points to a linked list of 1 or more struct addrinfos
-    if ((status = getaddrinfo(NULL, "3490", &hints, &res)) != 0) 
+    if ((status = getaddrinfo(NULL, MYPORT, &hints, &res)) != 0)
     {
-       printf("Error in getaddrinfo: %s", gai_strerror(status)); 
-		  return (-1);
+    	printf("Error in getaddrinfo: %s", gai_strerror(status));
+		return (-1);
     }
 
     // make a socket
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (sockfd != 0)
+    if (sockfd == -1)
     {
-      printf("error is socket %s %d", strerror(errno), errno); 
-		  return (-1);
+    	printf("error is socket %s %d", strerror(errno), errno);
+		return (-1);
     }
-
+	printf("Socket created\n");
     // bind the socket
-    if (bind(sockfd, res->ai_addr, res->ai_addrlen) != 0)
+    if (bind(sockfd, res->ai_addr, res->ai_addrlen) == -1)
     {
-       printf("Error in bind: %s", strerror(errno)); 
-		  return (-1);
+    	printf("Error in bind: %s", strerror(errno));
+		return (-1);
     }
-   
+	printf("Bind connected\n");
 
     // listen to the socket
 
-    if (listen(sockfd, BACKLOG) != 0)
+	if (listen(sockfd, BACKLOG) == -1)
     {
-       printf("Error in listen: %s", strerror(errno)); 
-		  return (-1);
+    	printf("Error in listen: %s", strerror(errno));
+		return (-1);
     }
+	printf("Listening...\n");
 
     // now accept an incoming connection:
 
     addr_size = sizeof their_addr;
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
-    if (new_fd != 0)
+    if (new_fd == -1)
     {
-       printf("Error in accept: %s", strerror(errno)); 
-		  return (-1);
+		printf("Error in accept: %s", strerror(errno));
+		return (-1);
     }
-  freeaddrinfo(res);
+	printf("Accepting...\n");
+	freeaddrinfo(res);
 	return (0);
 }
