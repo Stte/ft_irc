@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 	}
 	catch (std::exception &e)
 	{
+		serv.close_fds();
 		std::cerr << e.what() << std::endl;
 	}
 

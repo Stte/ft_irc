@@ -28,6 +28,8 @@ class Server
 		Server(int port, const std::string &password);
 		void create_server_socket();
 		void server_init();
+		void close_fds();
+
 
 };
 

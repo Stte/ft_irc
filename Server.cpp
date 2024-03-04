@@ -27,24 +27,34 @@ void Server::create_server_socket()
 	optset = 1;
 	if (setsockopt(this->server_socket, SOL_SOCKET, SO_REUSEADDR, &optset, sizeof(optset)) == -1) // Set the SO_REUSEADDR option to allow the socket to reuse the address
 		throw (std::runtime_error("failed to set option (SO_REUSEADDR) on socket"));
-	if (fcntl(this->server_socket, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
+	if (fcntl(this->server_socket, F_SETFL, O_NONBLOCK) == -1) // set the socket option (O_NONBLOCK) for non-blocking socket
 		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
 	if (bind(this->server_socket, (struct sockaddr *)&addr, sizeof(addr)) == -1) // bind the socket to the address
 		throw(std::runtime_error("faild to bind socket"));
 	if (listen(this->server_socket, SOMAXCONN) == -1) // listen for incoming connections and making the socket a passive socket
 		throw(std::runtime_error("listen() faild"));
 
-	new_poll.fd = this->server_socket; //  add the server socket to the pollfd
-	new_poll.events = POLLIN; //  set the event to POLLIN for reading data
+	new_poll.fd = this->server_socket; // add the server socket to the pollfd
+	new_poll.events = POLLIN; //set the event to POLLIN for reading data
 	new_poll.revents = 0; // set the revents to 0
 	this->fds.push_back(new_poll); // add the server socket to the pollfd
+
 }
 
 void Server::server_init()
 {
 	create_server_socket();
 
-	std::cout << "Server" << this->server_socket << "Connected" << std::endl;
+	std::cout << "Server " << this->server_socket << " Connected" << std::endl;
 	std::cout << "Waiting to accept a connection..." << std::endl;
 
+}
+
+void Server::close_fds()
+{
+	if (this->server_socket != -1)
+	{
+		std::cout << "Server " << this->server_socket << " disconnected" << std::endl;
+		close(this->server_socket);
+	}
 }
