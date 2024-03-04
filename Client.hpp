@@ -19,7 +19,7 @@ class Client
 
 	public:
 		Client();
-		~Client();
+
 };
 
 #endif

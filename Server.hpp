@@ -17,6 +17,7 @@ class Server
 {
 	private:
 		int port;
+		const std::string password;
 		int server_socket;
 		static bool signal;
 		std::vector<Client> clients;
@@ -24,8 +25,9 @@ class Server
 
 
 	public:
-		Server(std::string port, std::string &password);
-		~Server();
+		Server(int port, const std::string &password);
+		void create_server_socket();
+		void server_init();
 
 };
 
