@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 		std::cerr << "Wrong args - ./ircserv port password" << std::endl;
 		return (1) ;
 	}
-	std::cout << "---- IRC SERVER ----" << std::endl;
+	std::cout << YELLOW << "---- IRC SERVER ----" << WHITE << std::endl;
 	Server serv(std::stoi(argv[1]), argv[2]);
 	try
 	{

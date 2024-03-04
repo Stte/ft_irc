@@ -45,7 +45,7 @@ void Server::server_init()
 {
 	create_server_socket();
 
-	std::cout << "Server " << this->server_socket << " Connected" << std::endl;
+	std::cout << GREEN << "Server " << this->server_socket << " Connected" << WHITE << std::endl;
 	std::cout << "Waiting to accept a connection..." << std::endl;
 
 }
@@ -54,7 +54,7 @@ void Server::close_fds()
 {
 	if (this->server_socket != -1)
 	{
-		std::cout << "Server " << this->server_socket << " disconnected" << std::endl;
+		std::cout << RED << "Server " << this->server_socket << " disconnected" << WHITE << std::endl;
 		close(this->server_socket);
 	}
 }
