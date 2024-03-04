@@ -1,6 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "Client.hpp"
 #include <iostream>
 #include <vector> //-> for vector
 #include <sys/socket.h> //-> for socket()
@@ -15,6 +16,12 @@
 class Server
 {
 	private:
+		int port;
+		int server_socket;
+		static bool signal;
+		std::vector<Client> clients;
+		std::vector<struct pollfd> fds;
+
 
 	public:
 		Server(std::string port, std::string &password);
