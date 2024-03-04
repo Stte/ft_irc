@@ -19,7 +19,6 @@ int main(int argc, char **argv)
 		serv.close_fds();
 		std::cerr << e.what() << std::endl;
 	}
-
-
+	std::cout << RED << "Server Closed!" << WHITE << std::endl;
 	return (0);
 }
