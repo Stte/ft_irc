@@ -151,3 +151,10 @@ void Server::remove_client(int fd)
 		}
 	}
 }
+
+void Server::handle_signal(int sig)
+{
+	(void)sig;
+	std::cout << std::endl << "Signal Received!" << std::endl;
+	Server::signal = true;
+}

@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 	Server serv(std::stoi(argv[1]), argv[2]);
 	try
 	{
+      signal(SIGINT, Server::handle_signal);
 		serv.server_init();
 	}
 	catch (std::exception &e)
@@ -20,6 +21,6 @@ int main(int argc, char **argv)
 		serv.close_fds();
 		std::cerr << e.what() << std::endl;
 	}
-	std::cout << RED << "Server Closed!" << WHITE << std::endl;
+	std::cout << YELLOW << "Server Closed!" << WHITE << std::endl;
 	return (0);
 }

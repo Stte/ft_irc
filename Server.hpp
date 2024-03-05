@@ -40,6 +40,7 @@ class Server
 		void accept_new_client();
 		void receive_new_data(int fd);
 		void remove_client(int fd);
+		static void handle_signal(int sig);
 
 
 };
