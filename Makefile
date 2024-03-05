@@ -19,7 +19,7 @@ fclean: clean
 
 re: fclean all
 
-client: client.cpp
+client: client1.cpp
 	@c++ $(FLAGS) -o client client1.cpp
 
 debug: FLAGS += -g

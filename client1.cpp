@@ -5,7 +5,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#define MYPORT "3490"
+#include <cstring>
+#define MYPORT "4444"
 
 int main() {
     int sockfd;

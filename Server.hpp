@@ -39,6 +39,7 @@ class Server
 		void close_fds();
 		void accept_new_client();
 		void receive_new_data(int fd);
+		void remove_client(int fd);
 
 
 };
