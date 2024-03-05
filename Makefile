@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRC = main.cpp
+SRC = main.cpp Server.cpp Client.cpp
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
@@ -20,7 +20,7 @@ fclean: clean
 re: fclean all
 
 client: client.cpp
-	@c++ $(FLAGS) -o client client.cpp
+	@c++ $(FLAGS) -o client client1.cpp
 
 debug: FLAGS += -g
 debug: re
