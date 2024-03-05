@@ -43,7 +43,7 @@ void Server::create_server_socket()
 
 void Server::server_init()
 {
-	create_server_socket();
+	this->create_server_socket();
 	std::cout << GREEN << "Server " << this->server_socket << " Connected" << WHITE << std::endl;
 	std::cout << "Waiting to accept a connection..." << std::endl;
 	while (this->signal == false) // run the server until the signal is received
@@ -56,13 +56,13 @@ void Server::server_init()
 			if (this->fds[i].revents & POLLIN) // check if there is data to read
 			{
 				if (this->fds[i].fd == this->server_socket)
-					accept_new_client(); // accept new client
+					this->accept_new_client(); // accept new client
 				else
-					receive_new_data(this->fds[i].fd); // receive new data from a registered client
+					this->receive_new_data(this->fds[i].fd); // receive new data from a registered client
 			}
 		}
 	}
-	close_fds(); // close the fd's when the server gets signal and breaks the loop
+	this->close_fds(); // close the fd's when the server gets signal and breaks the loop
 }
 
 void Server::close_fds()
@@ -105,7 +105,7 @@ void Server::accept_new_client()
 	usr.set_fd(usr_fd); // set the client fd
 	usr.set_IPaddr(inet_ntoa((usraddr.sin_addr))); // convert the ip address to string and set it
 	clients.push_back(usr); // add the client to the vector of clients
-	fds.push_back(new_poll); // add the client socket to the fd's vector
+	this->fds.push_back(new_poll); // add the client socket to the fd's vector
 
 	std::cout << GREEN << "Client <" << usr_fd << "> Connected" << WHITE << std::endl;
 }
@@ -121,7 +121,7 @@ void Server::receive_new_data(int fd)
 	if (bytes <= 0)  // check if the client disconnected
 	{
 		std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-		remove_client(fd); // remove from clients vector and fd's vector
+		this->remove_client(fd); // remove from clients vector and fd's vector
 		close(fd); // close the client socket
 	}
 	else //print the received data
