@@ -15,10 +15,16 @@
 class Client
 {
 	private:
+		int fd;
+		std::string IPaddr;
 
 
 	public:
 		Client();
+		
+		int get_fd();
+		void set_fd(int fd);
+		void set_IPaddr(std::string IPaddr);
 
 };
 

@@ -52,6 +52,11 @@ void Server::server_init()
 
 void Server::close_fds()
 {
+	for(size_t i = 0; i < clients.size(); i++)
+	{ 
+		std::cout << RED << "Client <" << clients[i].get_fd() << "> Disconnected" << WHITE << std::endl;
+		close(clients[i].get_fd());
+	}
 	if (this->server_socket != -1)
 	{
 		std::cout << RED << "Server " << this->server_socket << " disconnected" << WHITE << std::endl;

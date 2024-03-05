@@ -2,7 +2,7 @@ NAME = ircserv
 
 SRC = main.cpp Server.cpp Client.cpp
 
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS = -Wall -Wextra -Werror -std=c++11
 
 .PHONY: all clean fclean re
 

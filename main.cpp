@@ -9,6 +9,7 @@ int main(int argc, char **argv)
 		return (1) ;
 	}
 	std::cout << YELLOW << "---- IRC SERVER ----" << WHITE << std::endl;
+   // need to add check for port that is valid
 	Server serv(std::stoi(argv[1]), argv[2]);
 	try
 	{

@@ -4,6 +4,7 @@
 #include "Client.hpp"
 #include <iostream>
 #include <vector>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -12,6 +13,8 @@
 #include <arpa/inet.h>
 #include <poll.h>
 #include <csignal>
+#include <cstring>
+
 #define RED "\e[1;31m"
 #define WHITE "\e[0;37m"
 #define GREEN "\e[1;32m"
@@ -30,6 +33,7 @@ class Server
 
 	public:
 		Server(int port, const std::string &password);
+		
 		void create_server_socket();
 		void server_init();
 		void close_fds();
