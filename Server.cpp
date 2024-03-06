@@ -46,10 +46,10 @@ void Server::server_init()
 	this->create_server_socket();
 	std::cout << GREEN << "Server " << this->server_socket << " Connected" << WHITE << std::endl;
 	std::cout << "Waiting to accept a connection..." << std::endl;
-	while (this->signal == false) // run the server until the signal is received
+	while (Server::signal == false) // run the server until the signal is received
 	{
 		if ((poll(&this->fds[0], this->fds.size(), -1) == -1)
-			&& this->signal == false) // wait for an event
+			&& Server::signal == false) // wait for an event
 			throw(std::runtime_error("poll() faild"));
 		for (size_t i = 0; i < this->fds.size(); i++) // check all fd's
 		{
@@ -89,12 +89,12 @@ void Server::accept_new_client()
 	int usr_fd = accept(this->server_socket, (sockaddr *)&(usraddr), &len); // accept the new client
 	if (usr_fd == -1)
 	{
-		std::cout << "accept() failed" << std::endl; 
+		std::cout << "accept() failed" << std::endl;
 		return;
 	}
 	if (fcntl(usr_fd, F_SETFL, O_NONBLOCK) == -1) // set the socket option (O_NONBLOCK) for non-blocking socket
 	{
-		std::cout << "fcntl() failed" << std::endl; 
+		std::cout << "fcntl() failed" << std::endl;
 		return;
 	}
 
@@ -125,7 +125,7 @@ void Server::receive_new_data(int fd)
 		close(fd); // close the client socket
 	}
 	else //print the received data
-	{ 
+	{
 		buff[bytes] = '\0';
 		std::cout << YELLOW << "Client <" << fd << "> Data:" << WHITE << std::endl << buff;
 		// HERE WE ADD OUR PARCING FUNCTIONS AND DO THE PARCING
@@ -135,18 +135,18 @@ void Server::receive_new_data(int fd)
 void Server::remove_client(int fd)
 {
 	for(size_t i = 0; i < this->fds.size(); i++)
-	{ 
+	{
 		if (this->fds[i].fd == fd)
 		{
-			this->fds.erase(this->fds.begin() + i); 
+			this->fds.erase(this->fds.begin() + i);
 			break;
 		}
 	}
 	for(size_t i = 0; i < this->clients.size(); i++)
-	{ 
+	{
 		if (this->clients[i].get_fd() == fd)
 		{
-			this->clients.erase(this->clients.begin() + i); 
+			this->clients.erase(this->clients.begin() + i);
 			break;
 		}
 	}
@@ -154,7 +154,7 @@ void Server::remove_client(int fd)
 
 void Server::handle_signal(int sig)
 {
-	(void)sig;
 	std::cout << std::endl << "Signal Received!" << std::endl;
+	(void)sig;
 	Server::signal = true;
 }

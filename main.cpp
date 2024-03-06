@@ -13,7 +13,8 @@ int main(int argc, char **argv)
 	Server serv(std::stoi(argv[1]), argv[2]);
 	try
 	{
-      signal(SIGINT, Server::handle_signal);
+		std::signal(SIGINT, Server::handle_signal);
+		std::signal(SIGQUIT, Server::handle_signal);
 		serv.server_init();
 	}
 	catch (std::exception &e)
