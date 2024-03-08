@@ -15,6 +15,7 @@
 #include <poll.h>
 #include <csignal>
 #include <cstring>
+#include "Replays.hpp"
 
 #define RED "\e[1;31m"
 #define WHITE "\e[0;37m"
@@ -48,8 +49,12 @@ class Server
 		void remove_client(int fd);
 		static void handle_signal(int sig);
 		void send_response(std::string response, int fd);
-		std::vector<std::string> split_recived_buffer(std::string str);
+		std::vector<std::vector<std::string>> split_recived_buffer(std::string str);
+		void exec_cmd(std::vector<std::string> cmd, int fd);
+		std::vector<std::string> split_cmd(std::string cmd);
 
+		// CMDS
+		void nick(std::vector<std::string> cmd, int fd);
 
 };
 
