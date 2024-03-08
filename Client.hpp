@@ -31,6 +31,10 @@ class Client
 		//Setters
 		void set_fd(int fd);
 		void set_IPaddr(std::string IPaddr);
+		void set_buffer(std::string buff);
+		void set_nickname(std::string &nickname);
+		void set_username(std::string &username);
+		void set_registered(bool value);
 
 		// Getter
 		int get_fd();
@@ -38,6 +42,11 @@ class Client
 		std::string get_nickname();
 		std::string get_username();
 		std::string get_buffer();
+
+
+		//Methods
+
+		void clear_buffer();
 
 };
 

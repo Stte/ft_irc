@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -34,6 +35,11 @@ class Server
 	public:
 		Server(int port, const std::string &password);
 
+
+		//Getters 
+		Client *get_client(int fd);
+
+		//Methods
 		void create_server_socket();
 		void server_init();
 		void close_fds();
@@ -41,6 +47,8 @@ class Server
 		void receive_new_data(int fd);
 		void remove_client(int fd);
 		static void handle_signal(int sig);
+		void send_response(std::string response, int fd);
+		std::vector<std::string> split_recived_buffer(std::string str);
 
 
 };
