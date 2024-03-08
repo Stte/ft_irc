@@ -17,14 +17,27 @@ class Client
 	private:
 		int fd;
 		std::string IPaddr;
+		bool registered;
+		std::string nickname;
+		std::string username;
+		std::string buffer;
+
 
 
 	public:
 		Client();
+		Client(std::string nickname, std::string username, int fd);
 		
-		int get_fd();
+		//Setters
 		void set_fd(int fd);
 		void set_IPaddr(std::string IPaddr);
+
+		// Getter
+		int get_fd();
+		bool get_registered();
+		std::string get_nickname();
+		std::string get_username();
+		std::string get_buffer();
 
 };
 
