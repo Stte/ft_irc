@@ -52,9 +52,11 @@ class Server
 		std::vector<std::vector<std::string>> split_recived_buffer(std::string str);
 		void exec_cmd(std::vector<std::string> cmd, int fd);
 		std::vector<std::string> split_cmd(std::string cmd);
+		bool nickname_in_use(std::string &nickname);
+		bool is_valid_nickname(std::string &nickname);
 
 		// CMDS
-		void nick(std::vector<std::string> cmd, int fd);
+		void nick(std::string nickname, int fd);
 
 };
 

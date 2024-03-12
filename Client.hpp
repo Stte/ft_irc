@@ -18,6 +18,7 @@ class Client
 		int fd;
 		std::string IPaddr;
 		bool registered;
+		bool logged_in;
 		std::string nickname;
 		std::string username;
 		std::string buffer;
@@ -35,10 +36,12 @@ class Client
 		void set_nickname(std::string &nickname);
 		void set_username(std::string &username);
 		void set_registered(bool value);
+		void set_loggedin(bool value);
 
 		// Getter
 		int get_fd();
 		bool get_registered();
+		bool get_loggedin();
 		std::string get_nickname();
 		std::string get_username();
 		std::string get_buffer();

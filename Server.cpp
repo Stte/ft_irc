@@ -126,5 +126,5 @@ void Server::exec_cmd(std::vector<std::string> cmd, int fd)
 		return ;
 	// ENUM OF ALL THE CMDS WE NEED AND SWITCH CASE??
 	if (cmd[0] == "NICK")
-		nick(cmd, fd);
+		nick(cmd[1], fd);
 }

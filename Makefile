@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRC = main.cpp Server.cpp Client.cpp server_helpers.cpp cmds.cpp cmds_helpers.cpp
+SRC = main.cpp Server.cpp Client.cpp server_helpers.cpp cmds.cpp cmd_helpers.cpp
 
 FLAGS = -Wall -Wextra -Werror -std=c++11
 

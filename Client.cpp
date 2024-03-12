@@ -6,6 +6,7 @@ Client::Client()
 	this->username = "";
 	this->fd = -1;
 	this->registered = false;
+	this->logged_in = false;
 	this->buffer = "";
 	this->IPaddr = "";
 }
@@ -44,6 +45,11 @@ bool Client::get_registered()
 	return (this->registered);
 }
 
+bool Client::get_loggedin()
+{
+	return (this->logged_in);
+}
+
 void Client::set_fd(int fd)
 {
 	this->fd = fd;
@@ -72,4 +78,9 @@ void Client::set_username(std::string &username)
 void Client::set_registered(bool value)
 {
 	this->registered = value;
+}
+
+void Client::set_loggedin(bool value)
+{
+	this->logged_in = value;
 }
