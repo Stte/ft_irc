@@ -26,6 +26,7 @@ class Server
 {
 	private:
 		int port;
+		std::string name;
 		const std::string password;
 		int server_socket;
 		static bool signal;
@@ -37,8 +38,9 @@ class Server
 		Server(int port, const std::string &password);
 
 
-		//Getters 
+		//Getters
 		Client *get_client(int fd);
+		std::string get_name();
 
 		//Methods
 		void create_server_socket();
@@ -57,6 +59,8 @@ class Server
 
 		// CMDS
 		void nick(std::string nickname, int fd);
+		void username(std::string username, int fd);
+		void join(std::string cmd, int fd);
 
 };
 

@@ -56,7 +56,12 @@ Client *Server::get_client(int fd)
 		if (this->clients[i].get_fd() == fd)
 			return (&this->clients[i]);
 	return (NULL);
-} 
+}
+
+std::string Server::get_name()
+{
+	return (this->name);
+}
 
 std::vector<std::vector<std::string>> Server::split_recived_buffer(std::string str)
 {

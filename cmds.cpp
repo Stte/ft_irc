@@ -17,7 +17,7 @@ void Server::nick(std::string nickname, int fd)
     if (user->get_nickname().empty())
       user->set_nickname(nick_in_use);
     this->send_response(ERR_NICKINUSE(nickname), fd);
-    return ; 
+    return ;
   }
   if (!is_valid_nickname(nickname))
   {
@@ -44,7 +44,7 @@ void Server::nick(std::string nickname, int fd)
       }
     }
     else if (user && !user->get_registered())
-      this->send_response(ERR_NOTREGISTERED(nickname), fd);
+      this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
   }
   if (user && user->get_registered() && !user->get_username().empty() &&  !user->get_nickname().empty() && user->get_nickname() != "!" && !user->get_loggedin())
 	{
@@ -52,5 +52,25 @@ void Server::nick(std::string nickname, int fd)
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 	}
 }
+
+// void Server::username(std::string username, int fd)
+// {
+
+// }
+
+void Server::join(std::string cmd, int fd)
+{
+	cmd.c_str();
+	Client *user = get_client(fd);
+	if (!user->get_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return ;
+	}
+
+
+}
+
+
 
 

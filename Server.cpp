@@ -3,7 +3,7 @@
 bool Server::signal = false;
 
 Server::Server(int port, const std::string &password)
-	: port(port), password(password)
+	: port(port), name("IRC SERVER"), password(password)
 {
 	this->server_socket = -1;
 }
@@ -127,4 +127,6 @@ void Server::exec_cmd(std::vector<std::string> cmd, int fd)
 	// ENUM OF ALL THE CMDS WE NEED AND SWITCH CASE??
 	if (cmd[0] == "NICK")
 		nick(cmd[1], fd);
+	if (cmd[0] == "JOIN")
+		join(cmd[0], fd);
 }
