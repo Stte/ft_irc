@@ -18,7 +18,6 @@ class Client
 		int fd;
 		std::string IPaddr;
 		bool registered;
-		bool logged_in;
 		std::string nickname;
 		std::string username;
 		std::string buffer;
@@ -28,7 +27,7 @@ class Client
 	public:
 		Client();
 		Client(std::string nickname, std::string username, int fd);
-		
+
 		//Setters
 		void set_fd(int fd);
 		void set_IPaddr(std::string IPaddr);
@@ -36,7 +35,6 @@ class Client
 		void set_nickname(std::string &nickname);
 		void set_username(std::string &username);
 		void set_registered(bool value);
-		void set_loggedin(bool value);
 
 		// Getter
 		int get_fd();
