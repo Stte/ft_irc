@@ -1,15 +1,19 @@
 NAME = ircserv
 
-SRC = main.cpp Server.cpp Client.cpp server_helpers.cpp cmds.cpp cmd_helpers.cpp
+S			= src/
+I			= inc/
+
+SRC = main.cpp $S/Server.cpp $S/Client.cpp $S/server_helpers.cpp $S/cmds.cpp $S/cmd_helpers.cpp
 
 FLAGS = -Wall -Wextra -Werror -std=c++11
+INCLUDES	= -I$I
 
 .PHONY: all clean fclean re
 
 all: $(NAME)
 
 $(NAME): $(SRC)
-	@c++ $(FLAGS) -o $(NAME) $(SRC)
+	@c++ $(FLAGS) $(INCLUDES) -o $(NAME) $(SRC)
 
 clean:
 	@rm -f $(NAME)
@@ -18,9 +22,6 @@ fclean: clean
 	@rm -f $(NAME) client
 
 re: fclean all
-
-client: client1.cpp
-	@c++ $(FLAGS) -o client client1.cpp
 
 debug: FLAGS += -g
 debug: re
