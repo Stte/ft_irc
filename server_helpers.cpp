@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+// Closing all the client fd's and the server socket
 void Server::close_fds()
 {
 	for (size_t i = 0; i < clients.size(); i++)
@@ -14,6 +15,7 @@ void Server::close_fds()
 	}
 }
 
+// Removing client from vectors
 void Server::remove_client(int fd)
 {
 	for (size_t i = 0; i < this->fds.size(); i++)
@@ -33,7 +35,7 @@ void Server::remove_client(int fd)
 		}
 	}
 }
-
+// Signal handler
 void Server::handle_signal(int sig)
 {
 	std::cout << std::endl
@@ -41,7 +43,7 @@ void Server::handle_signal(int sig)
 	(void)sig;
 	Server::signal = true;
 }
-
+// Sending response to the client
 void Server::send_response(std::string response, int fd)
 {
 	std::cout << "Response:\n"
@@ -49,7 +51,7 @@ void Server::send_response(std::string response, int fd)
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;
 }
-
+// Get the specific client
 Client *Server::get_client(int fd)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)
@@ -57,12 +59,12 @@ Client *Server::get_client(int fd)
 			return (&this->clients[i]);
 	return (NULL);
 }
-
+// Get server name
 std::string Server::get_name()
 {
 	return (this->name);
 }
-
+// Spliting each of clients input to vector of vector of strings
 std::vector<std::vector<std::string>> Server::split_recived_buffer(std::string str)
 {
 	size_t	pos;
@@ -79,7 +81,7 @@ std::vector<std::vector<std::string>> Server::split_recived_buffer(std::string s
 	}
 	return (vec);
 }
-
+// Spliting the input to strings
 std::vector<std::string> Server::split_cmd(std::string cmd)
 {
 	std::vector<std::string> vec;

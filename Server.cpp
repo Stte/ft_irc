@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+// Static variable
 bool Server::signal = false;
 
 Server::Server(int port, const std::string &password)
@@ -8,6 +9,7 @@ Server::Server(int port, const std::string &password)
 	this->server_socket = -1;
 }
 
+// Creeating the server socket
 void Server::create_server_socket()
 {
 	struct pollfd	new_poll;
@@ -41,6 +43,7 @@ void Server::create_server_socket()
 	this->fds.push_back(new_poll); // add the server socket to the pollfd
 }
 
+// Initializing the server and running the poll loop
 void Server::server_init()
 {
 	this->create_server_socket();
@@ -65,6 +68,7 @@ void Server::server_init()
 	this->close_fds(); // close the fd's when the server gets signal and breaks the loop
 }
 
+// Accepting new clients
 void Server::accept_new_client()
 {
 	struct sockaddr_in	usraddr;
@@ -95,6 +99,7 @@ void Server::accept_new_client()
 	std::cout << GREEN << "Client <" << usr_fd << "> Connected" << WHITE << std::endl;
 }
 
+// Recieving the data from the client and sending to the parser
 void Server::receive_new_data(int fd)
 {
 	std::vector<std::vector<std::string>> cmd_vec;       //vector of vectors
@@ -120,6 +125,7 @@ void Server::receive_new_data(int fd)
 	}
 }
 
+// Parser
 void Server::exec_cmd(std::vector<std::string> cmd, int fd)
 {
 	if (cmd.empty())

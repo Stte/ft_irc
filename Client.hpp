@@ -46,7 +46,6 @@ class Client
 
 
 		//Methods
-
 		void clear_buffer();
 
 };

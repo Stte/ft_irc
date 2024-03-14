@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+// NICK command
 void Server::nick(std::string nickname, int fd)
 {
 	size_t pos = nickname.find_first_not_of("\t\v ");
@@ -48,6 +49,8 @@ void Server::nick(std::string nickname, int fd)
 	}
 }
 
+
+// USER command
 void Server::username(std::vector<std::string> username, int fd)
 {
 	Client *user = get_client(fd);
@@ -71,6 +74,7 @@ void Server::username(std::vector<std::string> username, int fd)
 	}
 }
 
+// JOIN command
 void Server::join(std::string cmd, int fd)
 {
 	cmd.c_str(); // to quite the werror
@@ -80,8 +84,6 @@ void Server::join(std::string cmd, int fd)
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 		return ;
 	}
-
-
 }
 
 

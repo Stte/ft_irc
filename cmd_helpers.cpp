@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+// Checking if the nickname is used already
 bool Server::nickname_in_use(std::string &nickname)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)
@@ -10,9 +11,10 @@ bool Server::nickname_in_use(std::string &nickname)
 	return false;
 }
 
+// Checking if the nickname is valid
 bool Server::is_valid_nickname(std::string &nickname)
 {
-		
+
 	if(!nickname.empty() && (nickname[0] == '&' || nickname[0] == '#' || nickname[0] == ':'))
 		return false;
 	for(size_t i = 1; i < nickname.size(); i++)
