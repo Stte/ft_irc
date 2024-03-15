@@ -39,7 +39,7 @@ std::string Client::get_buffer()
 	return (this->buffer);
 }
 
-bool Client::get_registered()
+bool Client::is_registered()
 {
 	return (this->registered);
 }

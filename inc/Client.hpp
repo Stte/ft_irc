@@ -38,8 +38,7 @@ class Client
 
 		// Getter
 		int get_fd();
-		bool get_registered();
-		bool get_loggedin();
+		bool is_registered();
 		std::string get_nickname();
 		std::string get_username();
 		std::string get_buffer();

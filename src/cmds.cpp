@@ -1,15 +1,30 @@
 #include "Server.hpp"
 
+// PASS command 
+void Server::pass(std::string pass, int fd)
+{
+	Client *user = get_client(fd);
+	size_t pos = pass.find_first_not_of(" \t\v");
+	if (pos == std::string::npos || pass.empty())
+		this->send_response(ERR_NOTENOUGHPARAM(std::string("*")), fd);
+	else if (!user->is_registered())
+		if (pass == this->password)
+			user->setRegistered(true);
+		else
+			this->send_response(ERR_INCORPASS(std::string("*")), fd);
+	else
+		this->send_response(ERR_ALREADYREGISTERED(std::string("*")), fd);
+	}
 // NICK command
 void Server::nick(std::string nickname, int fd)
 {
-	size_t pos = nickname.find_first_not_of("\t\v ");
+	size_t pos = nickname.find_first_not_of(" \t\v");
 	if (pos != std::string::npos)
 		nickname = nickname.substr(pos);
 	Client *user = get_client(fd);
 	if (pos == std::string::npos || nickname.empty())
 	{
-		this->send_response(ERR_NOTENOUGHPARAM(std::string("!")), fd);
+		this->send_response(ERR_NOTENOUGHPARAM(std::string("*")), fd);
 		return ;
 	}
 	if (nickname_in_use(nickname) && user->get_nickname() != nickname)
@@ -42,7 +57,7 @@ void Server::nick(std::string nickname, int fd)
 			return ;
 		}
 	}
-	if (user && !user->get_registered() && !user->get_nickname().empty())
+	if (user && !user->is_registered() && !user->get_nickname().empty())
 	{
 		user->set_registered(true);
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
@@ -58,7 +73,7 @@ void Server::username(std::vector<std::string> username, int fd)
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
 	}
-	if (!user || !user->get_registered())
+	if (!user || !user->is_registered())
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 	else if (user && !user->get_username().empty())
 	{
@@ -67,7 +82,7 @@ void Server::username(std::vector<std::string> username, int fd)
 	}
 	else
 		user->set_username(username[1]);
-	if (user && !user->get_registered() && !user->get_username().empty())
+	if (user && !user->is_registered() && !user->get_username().empty())
 	{
 		user->set_registered(true);
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
@@ -79,7 +94,7 @@ void Server::join(std::string cmd, int fd)
 {
 	cmd.c_str(); // to quite the werror
 	Client *user = get_client(fd);
-	if (!user->get_registered())
+	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 		return ;

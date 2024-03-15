@@ -61,6 +61,7 @@ class Server
 		void nick(std::string nickname, int fd);
 		void username(std::vector<std::string> username, int fd);
 		void join(std::string cmd, int fd);
+		void pass(std::string pass, int fd);
 
 };
 
