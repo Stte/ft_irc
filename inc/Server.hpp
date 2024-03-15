@@ -22,6 +22,26 @@
 #define GREEN "\e[1;32m"
 #define YELLOW "\e[1;33m"
 
+enum IRCCommand {
+    JOIN,
+    NICK,
+    USER,
+    PASS,
+    CAP,
+    MOTD,
+    MODE,
+    KICK,
+    PING,
+    PONG,
+    INVITE,
+    PRIVMSG,
+    QUIT,
+    TOPIC,
+    PART,
+    WHO,
+    WHOIS
+};
+
 class Server
 {
 	private:

@@ -130,7 +130,6 @@ void Server::exec_cmd(std::vector<std::string> cmd, int fd)
 {
 	if (cmd.empty())
 		return ;
-	// ENUM OF ALL THE CMDS WE NEED AND SWITCH CASE??
 	if (cmd[0] == "JOIN")
 		join(cmd[0], fd);
 	if (cmd[0] == "NICK")
