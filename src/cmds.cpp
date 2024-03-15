@@ -9,11 +9,11 @@ void Server::pass(std::string pass, int fd)
 		this->send_response(ERR_NOTENOUGHPARAM(std::string("*")), fd);
 	else if (!user->is_registered())
 		if (pass == this->password)
-			user->setRegistered(true);
+			user->set_registered(true);
 		else
 			this->send_response(ERR_INCORPASS(std::string("*")), fd);
 	else
-		this->send_response(ERR_ALREADYREGISTERED(std::string("*")), fd);
+		this->send_response(ERR_ALREADYREGISTERED(user->get_nickname()), fd);
 	}
 // NICK command
 void Server::nick(std::string nickname, int fd)
@@ -42,26 +42,28 @@ void Server::nick(std::string nickname, int fd)
 	}
 	else
 	{
-		std::string old_nick = user->get_nickname();
-		user->set_nickname(nickname);
-		if (!old_nick.empty() && old_nick != nickname)
+		if (user && user->is_registered())
 		{
-			if (old_nick == "!" && !user->get_username().empty())
+			std::string old_nick = user->get_nickname();
+			user->set_nickname(nickname);
+			if (!old_nick.empty() && old_nick != nickname)
 			{
-				user->set_registered(true);
-				this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
-				this->send_response(RPL_NICKCHANGE(user->get_nickname(), nickname), fd);
+				if (old_nick == "!" && !user->get_username().empty())
+				{
+					user->set_registered(true);
+					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
+					this->send_response(RPL_NICKCHANGE(user->get_nickname(), nickname), fd);
+				}
+				else
+					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
+				return ;
 			}
-			else
-				this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
-			return ;
 		}
+		else if (user && !user->is_registered())
+			this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 	}
-	if (user && !user->is_registered() && !user->get_nickname().empty())
-	{
-		user->set_registered(true);
+	if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
-	}
 }
 
 
@@ -82,11 +84,8 @@ void Server::username(std::vector<std::string> username, int fd)
 	}
 	else
 		user->set_username(username[1]);
-	if (user && !user->is_registered() && !user->get_username().empty())
-	{
-		user->set_registered(true);
+	if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
-	}
 }
 
 // JOIN command
