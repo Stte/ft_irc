@@ -18,22 +18,23 @@ void Server::close_fds()
 // Removing client from vectors
 void Server::remove_client(int fd)
 {
-	for (size_t i = 0; i < this->fds.size(); i++)
-	{
-		if (this->fds[i].fd == fd)
+
+    for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); ++it) 
 		{
-			this->fds.erase(this->fds.begin() + i);
-			break ;
-		}
-	}
-	for (size_t i = 0; i < this->clients.size(); i++)
-	{
-		if (this->clients[i].get_fd() == fd)
+        if (it->fd == fd) 
+				{
+            this->fds.erase(it);
+            break; 
+        }
+    }
+    for (std::vector<Client>::iterator it = this->clients.begin(); it != this->clients.end(); ++it) 
 		{
-			this->clients.erase(this->clients.begin() + i);
-			break ;
-		}
-	}
+        if (it->get_fd() == fd)
+				{
+            this->clients.erase(it);
+            break; 
+        }
+    }
 }
 // Signal handler
 void Server::handle_signal(int sig)

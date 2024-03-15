@@ -133,10 +133,10 @@ void Server::exec_cmd(std::vector<std::string> cmd, int fd)
 	// ENUM OF ALL THE CMDS WE NEED AND SWITCH CASE??
 	if (cmd[0] == "JOIN")
 		join(cmd[0], fd);
-	if (cmd[0] == "PASS")
-		pass(cmd[1], fd);
 	if (cmd[0] == "NICK")
 		nick(cmd[1], fd);
 	if (cmd[0] == "USER")
 		username(cmd, fd);
+	if (cmd[0] == "PASS")
+		pass(cmd[1], fd);
 }

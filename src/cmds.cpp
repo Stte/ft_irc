@@ -59,8 +59,6 @@ void Server::nick(std::string nickname, int fd)
 				return ;
 			}
 		}
-		else if (user && !user->is_registered())
-			this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 	}
 	if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
@@ -75,9 +73,7 @@ void Server::username(std::vector<std::string> username, int fd)
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
 	}
-	if (!user || !user->is_registered())
-		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
-	else if (user && !user->get_username().empty())
+	if (user && !user->get_username().empty())
 	{
 		this->send_response(ERR_ALREADYREGISTERED(user->get_nickname()), fd);
 		return ;
