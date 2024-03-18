@@ -58,6 +58,25 @@ void Channel::mode(int action, const std::string &commander, std::string const &
 		remove_mode(mode);
 }
 
+void Channel::op(int action, const std::string &commander, std::string const &nickname)
+{
+	if (!is_op(commander))
+	{
+		std::cerr << "Client could not op: not an op" << std::endl;
+		return;
+	}
+	if (action == ADD)
+	{
+		if (std::find(this->ops.begin(), this->ops.end(), nickname) == this->ops.end())
+			this->ops.push_back(nickname);
+	}
+	else if (action == REMOVE)
+	{
+		this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), nickname), this->ops.end());
+	}
+	// todo: messages?
+}
+
 int main()
 {
 	Client client("test", "test1", 1);
@@ -87,6 +106,22 @@ int main()
 
 	// print modes
 	std::cout << "Modes: " << (int)channel.get_modes() << std::endl;
+
+	channel.op(ADD, client.get_nickname(), "test2");
+	// print ops
+	std::vector<std::string> ops = channel.get_ops();
+	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
+
+	channel.op(REMOVE, client.get_nickname(), "test2");
+	// print ops
+	ops = channel.get_ops();
+	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
 
 	return 0;
 }

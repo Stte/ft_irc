@@ -9,9 +9,14 @@ bool Channel::is_op(std::string const &nickname)
 
 /// GETTERS ///
 
-std::map<std::string, Client *> Channel::get_clients()
+std::map<std::string, Client *> Channel::get_clients() const
 {
 	return (this->clients);
+}
+
+std::vector<std::string> Channel::get_ops() const
+{
+	return (this->ops);
 }
 
 unsigned char Channel::get_modes()

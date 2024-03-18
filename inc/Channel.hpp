@@ -26,11 +26,12 @@ public:
 	// void part(Client &client);
 	void invite(std::string const &commander, std::string const &nickname); // maybe Client &commander
 	// void kick(Client &commander, std::string const &nickname);
-	void mode(int action, std::string const &commander, std::string const &mode); // Client &commander
-	// void op(int action, std::string const &commander, std::string const &nickname); // Client &commander
+	void mode(int action, std::string const &commander, std::string const &mode);	// Client &commander
+	void op(int action, std::string const &commander, std::string const &nickname); // Client &commander
 	// void topic(Client &client, std::string const &topic);
 
-	std::map<std::string, Client *> get_clients();
+	std::map<std::string, Client *> get_clients() const;
+	std::vector<std::string> get_ops() const;
 	unsigned char get_modes();
 
 	// void set_key(std::string const &key);
