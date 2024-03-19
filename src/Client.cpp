@@ -39,6 +39,11 @@ std::string Client::get_buffer()
 	return (this->buffer);
 }
 
+std::string Client::get_IPaddr()
+{
+	return (this->IPaddr);
+}
+
 bool Client::is_registered()
 {
 	return (this->registered);
