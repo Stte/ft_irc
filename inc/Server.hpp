@@ -39,7 +39,8 @@ enum IRCCommand {
     TOPIC,
     PART,
     WHO,
-    WHOIS
+    WHOIS,
+	ERROR
 };
 
 class Server
@@ -76,6 +77,9 @@ class Server
 		std::vector<std::string> split_cmd(std::string cmd);
 		bool nickname_in_use(std::string &nickname);
 		bool is_valid_nickname(std::string &nickname);
+
+		//parser
+		
 
 		// CMDS
 		void nick(std::string nickname, int fd);
