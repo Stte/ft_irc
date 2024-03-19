@@ -26,8 +26,13 @@ unsigned char Channel::get_modes()
 
 /// SETTERS ///
 
-void Channel::set_limit(unsigned int limit)
+void Channel::set_limit(std::string const &commander, unsigned int limit)
 {
+	if (!is_op(commander))
+	{
+		std::cerr << "Client could not set limit: not an op" << std::endl;
+		return;
+	}
 	this->limit = limit;
 }
 

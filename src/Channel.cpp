@@ -45,6 +45,17 @@ void Channel::invite(const std::string &commander, std::string const &nickname)
 	// send message to client that he has been invited
 }
 
+void Channel::kick(const std::string &commander, std::string const &nickname)
+{
+	if (!is_op(commander))
+	{
+		std::cerr << "Client could not kick: not an op" << std::endl;
+		return;
+	}
+	this->clients.erase(nickname);
+	// send message to client that he has been kicked
+}
+
 void Channel::mode(int action, const std::string &commander, std::string const &mode)
 {
 	if (!is_op(commander))
@@ -83,9 +94,14 @@ int main()
 	Channel channel("test", client);
 
 	Client client2("test2", "test2", 2);
-	channel.mode(ADD, client2.get_nickname(), "i");
-	channel.mode(ADD, client.get_nickname(), "i");
 	channel.join(client2);
+
+	// print ops
+	std::vector<std::string> ops = channel.get_ops();
+	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
 
 	// print clients
 	std::map<std::string, Client *> clients = channel.get_clients();
@@ -94,33 +110,15 @@ int main()
 		std::cout << it->first << " => " << it->second->get_nickname() << std::endl;
 	}
 
-	channel.invite(client.get_nickname(), "test2");
-	channel.join(client2);
+	channel.kick("test", "test2");
+
+	std::cout << "After kick" << std::endl;
 
 	// print clients
 	clients = channel.get_clients();
 	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
 		std::cout << it->first << " => " << it->second->get_nickname() << std::endl;
-	}
-
-	// print modes
-	std::cout << "Modes: " << (int)channel.get_modes() << std::endl;
-
-	channel.op(ADD, client.get_nickname(), "test2");
-	// print ops
-	std::vector<std::string> ops = channel.get_ops();
-	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
-	{
-		std::cout << *it << std::endl;
-	}
-
-	channel.op(REMOVE, client.get_nickname(), "test2");
-	// print ops
-	ops = channel.get_ops();
-	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
-	{
-		std::cout << *it << std::endl;
 	}
 
 	return 0;

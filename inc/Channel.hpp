@@ -25,7 +25,7 @@ public:
 	void join(Client &client);
 	// void part(Client &client);
 	void invite(std::string const &commander, std::string const &nickname); // maybe Client &commander
-	// void kick(Client &commander, std::string const &nickname);
+	void kick(std::string const &commander, std::string const &nickname);
 	void mode(int action, std::string const &commander, std::string const &mode);	// Client &commander
 	void op(int action, std::string const &commander, std::string const &nickname); // Client &commander
 	// void topic(Client &client, std::string const &topic);
@@ -35,7 +35,7 @@ public:
 	unsigned char get_modes();
 
 	// void set_key(std::string const &key);
-	void set_limit(unsigned int limit);
+	void set_limit(std::string const &commander, unsigned int limit);
 
 	bool is_op(std::string const &commander); // Client &commander
 
