@@ -52,6 +52,46 @@ void Server::send_response(std::string response, int fd)
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;
 }
+
+void Server::send_response(rType responseType, std::string recipient, std::string response)
+{
+	bool sent = false;
+	switch (responseType)
+	{
+		case rType::ClientToChannel:
+		// for (auto ch : channel)
+		// {
+		// 	if (ch.get_name() == recipient)
+		//	{
+		// 		for (auto e ; ch.clients)
+		// 		{
+		// 			if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
+		//				std::cerr << "Response send() faild to user: " << e.get_nickname() << std::endl;
+		// 	}
+		//	}
+		//	return ;
+		//
+		// }
+		break ;
+		case rType::ClientToClient:
+		case rType::ServerToClient:
+		{
+			for (auto e : clients)
+			{
+				if (e.get_nickname() ==  recipient)
+				{
+					if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
+					{
+						std::cerr << "Response send() faild" << std::endl;
+						return ;
+					}
+						
+				}	
+			}
+			return ;
+		}
+	}
+}
 // Get the specific client
 Client *Server::get_client(int fd)
 {
