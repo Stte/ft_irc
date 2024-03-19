@@ -82,13 +82,13 @@ void Server::send_response(rType responseType, std::string recipient, std::strin
 				{
 					if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
 					{
-						std::cerr << "Response send() faild" << std::endl;
-						return ;
+						std::cerr << "Response send() faild to user:" << e.get_nickname() << std::endl;
+						return ; 
 					}
 						
 				}	
 			}
-			return ;
+			return ; // I am thinking here it should throw, because so the requester gets a notification that user was not found
 		}
 	}
 }
