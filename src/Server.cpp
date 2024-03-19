@@ -108,11 +108,7 @@ void Server::receive_new_data(int fd)
 	Client *user = get_client(fd);                       // get the client by fd
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // receive the data
 	if (bytes <= 0)                                     // check if the client disconnected
-	{
-		std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-		this->remove_client(fd); // remove from clients vector and fd's vector
-		close(fd);               // close the client socket
-	}
+		quit(fd);
 	else
 	{
 		user->set_buffer(buff);
