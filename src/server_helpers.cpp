@@ -65,12 +65,12 @@ std::string Server::get_name()
 {
 	return (this->name);
 }
-// Spliting each of clients input to vector of vector of strings
-std::vector<std::vector<std::string>> Server::split_recived_buffer(std::string str)
+// // Spliting each of clients input to vector of vector of strings
+std::vector<std::string> Server::split_recived_buffer(std::string str)
 {
 	size_t	pos;
 
-	std::vector<std::vector<std::string>> vec;
+	std::vector<std::string> vec;
 	std::istringstream input(str); // creating input streamm for getline
 	std::string line;
 	while (std::getline(input, line))
@@ -78,20 +78,20 @@ std::vector<std::vector<std::string>> Server::split_recived_buffer(std::string s
 		pos = line.find_first_of("\r\n");
 		if (pos != std::string::npos)
 			line = line.substr(0, pos);
-		vec.push_back(split_cmd(line));
+		vec.push_back(line);
 	}
 	return (vec);
 }
 // Spliting the input to strings
-std::vector<std::string> Server::split_cmd(std::string cmd)
-{
-	std::vector<std::string> vec;
-	std::istringstream input(cmd); // input stream to get every token
-	std::string token;
-	while (input >> token)
-	{
-		vec.push_back(token);
-		token.clear();
-	}
-	return (vec);
-}
+// std::vector<std::string> Server::split_cmd(std::string cmd)
+// {
+// 	std::vector<std::string> vec;
+// 	std::istringstream input(cmd); // input stream to get every token
+// 	std::string token;
+// 	while (input >> token)
+// 	{
+// 		vec.push_back(token);
+// 		token.clear();
+// 	}
+// 	return (vec);
+// }

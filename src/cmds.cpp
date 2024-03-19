@@ -69,7 +69,7 @@ void Server::nick(std::string nickname, int fd)
 void Server::username(std::vector<std::string> username, int fd)
 {
 	Client *user = get_client(fd);
-	if (user && username.size() < 5)
+	if (user && username.size() < 4)
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
 	}
@@ -79,7 +79,7 @@ void Server::username(std::vector<std::string> username, int fd)
 		return ;
 	}
 	else
-		user->set_username(username[1]);
+		user->set_username(username[0]);
 	if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }

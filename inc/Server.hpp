@@ -16,31 +16,33 @@
 #include <csignal>
 #include <cstring>
 #include "Replays.hpp"
+#include "Message.hpp"
 
 #define RED "\e[1;31m"
 #define WHITE "\e[0;37m"
 #define GREEN "\e[1;32m"
 #define YELLOW "\e[1;33m"
 
-enum IRCCommand {
-    JOIN,
-    NICK,
-    USER,
-    PASS,
-    CAP,
-    MOTD,
-    MODE,
-    KICK,
-    PING,
-    PONG,
-    INVITE,
-    PRIVMSG,
-    QUIT,
-    TOPIC,
-    PART,
-    WHO,
-    WHOIS
-};
+// enum IRCCommand {
+//     JOIN,
+//     NICK,
+//     USER,
+//     PASS,
+//     CAP,
+//     MOTD,
+//     MODE,
+//     KICK,
+//     PING,
+//     PONG,
+//     INVITE,
+//     PRIVMSG,
+//     QUIT,
+//     TOPIC,
+//     PART,
+//     WHO,
+//     WHOIS,
+// 		ERROR,
+// };
 
 class Server
 {
@@ -71,11 +73,14 @@ class Server
 		void remove_client(int fd);
 		static void handle_signal(int sig);
 		void send_response(std::string response, int fd);
-		std::vector<std::vector<std::string>> split_recived_buffer(std::string str);
-		void exec_cmd(std::vector<std::string> cmd, int fd);
+		std::vector<std::string> split_recived_buffer(std::string str);
+		void exec_cmd(Message &newmsg, int fd);
 		std::vector<std::string> split_cmd(std::string cmd);
 		bool nickname_in_use(std::string &nickname);
 		bool is_valid_nickname(std::string &nickname);
+
+		//parser
+		
 
 		// CMDS
 		void nick(std::string nickname, int fd);

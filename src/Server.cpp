@@ -102,7 +102,7 @@ void Server::accept_new_client()
 // Recieving the data from the client and sending to the parser
 void Server::receive_new_data(int fd)
 {
-	std::vector<std::vector<std::string>> cmd_vec;       //vector of vectors
+	std::vector<std::string> cmd_vec; 
 	char buff[1024];                                    // buffer for the received data
 	memset(buff, 0, sizeof(buff));                       // clear the buffer
 	Client *user = get_client(fd);                       // get the client by fd
@@ -119,23 +119,54 @@ void Server::receive_new_data(int fd)
 		if (user->get_buffer().find_first_of("\r\n") == std::string::npos) // each msg from client ends with \r \n
 			return ;
 		cmd_vec = split_recived_buffer(user->get_buffer());
-		for (size_t i = 0; i < cmd_vec.size(); i++)
-			this->exec_cmd(cmd_vec[i], fd);
+		for (auto e: cmd_vec)
+		{
+			// std::cout << "Mike: put a msg at the begginging - " << e << std::endl;
+			Message newmsg(e);
+			this->exec_cmd(newmsg, fd);
+		}
 		user->clear_buffer();
 	}
 }
 
 // Parser
-void Server::exec_cmd(std::vector<std::string> cmd, int fd)
+void Server::exec_cmd(Message &newmsg, int fd)
 {
-	if (cmd.empty())
-		return ;
-	if (cmd[0] == "JOIN")
-		join(cmd[0], fd);
-	if (cmd[0] == "NICK")
-		nick(cmd[1], fd);
-	if (cmd[0] == "USER")
-		username(cmd, fd);
-	if (cmd[0] == "PASS")
-		pass(cmd[1], fd);
+	// std::vector<std::string> params;
+	// params = newmsg.getParams();
+	// for (auto i: params)
+	// {
+	// 	printf("%s\n", i.c_str());
+	// } 
+	
+	switch (newmsg.getCommand())
+	{
+	case IRCCommand::CAP:
+  case IRCCommand::PING:
+  case IRCCommand::PONG:
+		break;
+	case IRCCommand::JOIN:
+		join(newmsg.getRawCmd(), fd);
+		break;
+	case IRCCommand::NICK:
+		nick(*newmsg.getParams().begin(), fd);
+		break;
+	case IRCCommand::USER:
+		username(newmsg.getParams(), fd);
+		break;
+	case IRCCommand::PASS:
+		pass(*newmsg.getParams().begin(), fd);
+		break;
+	default:
+		this->send_response(ERR_CMDNOTFOUND(std::string("*"), newmsg.getRawCmd()), fd);
+		break;
+	}
+	// if (cmd[0] == "JOIN")
+	// 	join(cmd[0], fd);
+	// if (cmd[0] == "NICK")
+	// 	nick(cmd[1], fd);
+	// if (cmd[0] == "USER")
+	// 	username(cmd, fd);
+	// if (cmd[0] == "PASS")
+	// 	pass(cmd[1], fd);
 }
