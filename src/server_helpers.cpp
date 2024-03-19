@@ -59,7 +59,7 @@ void Server::send_response(rType responseType, std::string recipient, std::strin
 	switch (responseType)
 	{
 		case rType::ClientToChannel:
-		// for (auto ch : channel)
+		// for (auto ch : channels)
 		// {
 		// 	if (ch.get_name() == recipient)
 		//	{
@@ -67,7 +67,7 @@ void Server::send_response(rType responseType, std::string recipient, std::strin
 		// 		{
 		// 			if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
 		//				std::cerr << "Response send() faild to user: " << e.get_nickname() << std::endl;
-		// 	}
+		// 		}
 		//	}
 		//	return ;
 		//
