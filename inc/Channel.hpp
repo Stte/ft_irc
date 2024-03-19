@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include "Client.hpp"
+#include "Server.hpp"
 
 #define MODE_I 0b00000001
 #define MODE_K 0b00000010
@@ -20,7 +21,7 @@ enum ModeAction
 class Channel
 {
 public:
-	Channel(std::string const &name, Client &client);
+	Channel(std::string const &name, Client &client, Server &server);
 
 	void join(Client &client);
 	// void part(Client &client);
@@ -41,6 +42,7 @@ public:
 
 private:
 	std::string name;
+	Server &server;
 	std::map<std::string, Client *> clients;
 	std::vector<std::string> ops;
 	std::vector<std::string> invite_list;

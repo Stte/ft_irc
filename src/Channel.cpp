@@ -1,8 +1,9 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string const &name, Client &client) : name(name), modes(0), limit(0)
+Channel::Channel(std::string const &name, Client &client, Server &server) : name(name), server(server), modes(0), limit(0)
 {
 	// do name check?
+	// check that server is valid
 	this->clients[client.get_nickname()] = &client;
 	this->ops.push_back(client.get_nickname());
 }
@@ -31,6 +32,7 @@ void Channel::join(Client &client)
 	}
 	this->clients[client.get_nickname()] = &client;
 	// broadcast a message to all clients in the channel that the client has joined
+	// server.send_response(RPL_JOINMSG(client.get_username(), client.get_IPaddr(), this->name), client.get_fd());
 }
 
 void Channel::invite(const std::string &commander, std::string const &nickname)
@@ -40,6 +42,13 @@ void Channel::invite(const std::string &commander, std::string const &nickname)
 		std::cerr << "Client could not invite: not an op" << std::endl;
 		return;
 	}
+	// check if client exists
+	// if (server.get_client(nickname) == NULL)
+	// {
+	// 	std::cerr << "Client could not invite: client does not exist" << std::endl;
+	// 	return;
+	// }
+
 	if (std::find(this->invite_list.begin(), this->invite_list.end(), nickname) == this->invite_list.end())
 		this->invite_list.push_back(nickname);
 	// send message to client that he has been invited
