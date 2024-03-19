@@ -96,6 +96,12 @@ void Server::join(std::string cmd, int fd)
 	}
 }
 
-
+void Server::quit(int fd)
+{
+	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
+	this->remove_client(fd);
+	close(fd);
+	return ;
+}
 
 

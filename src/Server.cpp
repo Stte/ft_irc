@@ -132,13 +132,6 @@ void Server::receive_new_data(int fd)
 // Parser
 void Server::exec_cmd(Message &newmsg, int fd)
 {
-	// std::vector<std::string> params;
-	// params = newmsg.getParams();
-	// for (auto i: params)
-	// {
-	// 	printf("%s\n", i.c_str());
-	// } 
-	
 	switch (newmsg.getCommand())
 	{
 	case IRCCommand::CAP:
@@ -157,16 +150,11 @@ void Server::exec_cmd(Message &newmsg, int fd)
 	case IRCCommand::PASS:
 		pass(*newmsg.getParams().begin(), fd);
 		break;
+	case IRCCommand::QUIT:
+		quit(fd);
+		break;
 	default:
 		this->send_response(ERR_CMDNOTFOUND(std::string("*"), newmsg.getRawCmd()), fd);
 		break;
 	}
-	// if (cmd[0] == "JOIN")
-	// 	join(cmd[0], fd);
-	// if (cmd[0] == "NICK")
-	// 	nick(cmd[1], fd);
-	// if (cmd[0] == "USER")
-	// 	username(cmd, fd);
-	// if (cmd[0] == "PASS")
-	// 	pass(cmd[1], fd);
 }
