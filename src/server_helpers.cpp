@@ -65,7 +65,7 @@ std::string Server::get_name()
 {
 	return (this->name);
 }
-// // Spliting each of clients input to vector of vector of strings
+// Spliting each of clients input to vector of vector of strings
 std::vector<std::string> Server::split_recived_buffer(std::string str)
 {
 	size_t	pos;
