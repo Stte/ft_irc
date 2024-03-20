@@ -99,8 +99,9 @@ void Channel::op(int action, const std::string &commander, std::string const &ni
 
 int main()
 {
+	Server server(1, "test");
 	Client client("test", "test1", 1);
-	Channel channel("test", client);
+	Channel channel("test", client, server);
 
 	Client client2("test2", "test2", 2);
 	channel.join(client2);
