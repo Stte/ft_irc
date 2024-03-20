@@ -14,12 +14,12 @@ Client::Client(std::string nickname, std::string username, int fd)
 {
 }
 
-int Client::get_fd()
+int Client::get_fd() const
 {
 	return (this->fd);
 }
 
-std::string Client::get_nickname()
+std::string Client::get_nickname() const
 {
 	return (this->nickname);
 }
@@ -29,12 +29,12 @@ void Client::clear_buffer()
 	this->buffer.clear();
 }
 
-std::string Client::get_username()
+std::string Client::get_username() const
 {
 	return (this->username);
 }
 
-std::string Client::get_buffer()
+std::string Client::get_buffer() const
 {
 	return (this->buffer);
 }

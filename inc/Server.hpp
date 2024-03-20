@@ -39,6 +39,7 @@ class Server
 		static bool signal;
 		std::vector<Client> clients;
 		std::vector<struct pollfd> fds;
+		const Client *findClient(std::string &nickname) const;
 
 
 	public:

@@ -53,9 +53,18 @@ void Server::send_response(std::string response, int fd)
 		std::cerr << "Response send() faild" << std::endl;
 }
 
+const Client *Server::findClient(std::string &nickname) const
+{
+	for (const Client &e : clients)
+			{
+				if (e.get_nickname() ==  nickname)
+					return &e;
+			}
+	return nullptr;
+}
+
 void Server::send_response(rType responseType, std::string recipient, std::string response)
 {
-	bool sent = false;
 	switch (responseType)
 	{
 		case rType::ClientToChannel:
@@ -76,17 +85,13 @@ void Server::send_response(rType responseType, std::string recipient, std::strin
 		case rType::ClientToClient:
 		case rType::ServerToClient:
 		{
-			for (auto e : clients)
+			const Client *findRecipient = findClient(recipient);
+			if (findRecipient == nullptr)
+				return ;
+			else
 			{
-				if (e.get_nickname() ==  recipient)
-				{
-					if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
-					{
-						std::cerr << "Response send() faild to user:" << e.get_nickname() << std::endl;
-						return ; 
-					}
-						
-				}	
+				if (send(findRecipient->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() faild to user: " << findRecipient->get_nickname() << std::endl;
 			}
 			return ; // I am thinking here it should throw, because so the requester gets a notification that user was not found
 		}
