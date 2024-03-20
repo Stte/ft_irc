@@ -108,11 +108,7 @@ void Server::receive_new_data(int fd)
 	Client *user = get_client(fd);                       // get the client by fd
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // receive the data
 	if (bytes <= 0)                                     // check if the client disconnected
-	{
-		std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-		this->remove_client(fd); // remove from clients vector and fd's vector
-		close(fd);               // close the client socket
-	}
+		quit(fd);
 	else
 	{
 		user->set_buffer(buff);
@@ -132,13 +128,6 @@ void Server::receive_new_data(int fd)
 // Parser
 void Server::exec_cmd(Message &newmsg, int fd)
 {
-	// std::vector<std::string> params;
-	// params = newmsg.getParams();
-	// for (auto i: params)
-	// {
-	// 	printf("%s\n", i.c_str());
-	// } 
-	
 	switch (newmsg.getCommand())
 	{
 	case IRCCommand::CAP:
@@ -157,16 +146,11 @@ void Server::exec_cmd(Message &newmsg, int fd)
 	case IRCCommand::PASS:
 		pass(*newmsg.getParams().begin(), fd);
 		break;
+	case IRCCommand::QUIT:
+		quit(fd);
+		break;
 	default:
 		this->send_response(ERR_CMDNOTFOUND(std::string("*"), newmsg.getRawCmd()), fd);
 		break;
 	}
-	// if (cmd[0] == "JOIN")
-	// 	join(cmd[0], fd);
-	// if (cmd[0] == "NICK")
-	// 	nick(cmd[1], fd);
-	// if (cmd[0] == "USER")
-	// 	username(cmd, fd);
-	// if (cmd[0] == "PASS")
-	// 	pass(cmd[1], fd);
 }

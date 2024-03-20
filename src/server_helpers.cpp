@@ -110,7 +110,7 @@ std::string Server::get_name()
 {
 	return (this->name);
 }
-// // Spliting each of clients input to vector of vector of strings
+// Spliting each of clients input to vector of vector of strings
 std::vector<std::string> Server::split_recived_buffer(std::string str)
 {
 	size_t	pos;
@@ -127,16 +127,3 @@ std::vector<std::string> Server::split_recived_buffer(std::string str)
 	}
 	return (vec);
 }
-// Spliting the input to strings
-// std::vector<std::string> Server::split_cmd(std::string cmd)
-// {
-// 	std::vector<std::string> vec;
-// 	std::istringstream input(cmd); // input stream to get every token
-// 	std::string token;
-// 	while (input >> token)
-// 	{
-// 		vec.push_back(token);
-// 		token.clear();
-// 	}
-// 	return (vec);
-// }

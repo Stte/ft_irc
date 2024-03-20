@@ -62,7 +62,6 @@ class Server
 		void send_response(rType responseType, std::string recipient, std::string response);
 		std::vector<std::string> split_recived_buffer(std::string str);
 		void exec_cmd(Message &newmsg, int fd);
-		std::vector<std::string> split_cmd(std::string cmd);
 		bool nickname_in_use(std::string &nickname);
 		bool is_valid_nickname(std::string &nickname);
 
@@ -74,6 +73,7 @@ class Server
 		void username(std::vector<std::string> username, int fd);
 		void join(std::string cmd, int fd);
 		void pass(std::string pass, int fd);
+		void quit(int fd);
 
 };
 
