@@ -15,7 +15,8 @@
 enum ModeAction
 {
 	REMOVE,
-	ADD
+	ADD,
+	VIEW
 };
 
 class Channel
@@ -27,9 +28,9 @@ public:
 	// void part(Client &client);
 	void invite(std::string const &commander, std::string const &nickname); // maybe Client &commander
 	void kick(std::string const &commander, std::string const &nickname);
-	void mode(int action, std::string const &commander, std::string const &mode);	// Client &commander
-	void op(int action, std::string const &commander, std::string const &nickname); // Client &commander
-	// void topic(Client &client, std::string const &topic);
+	void mode(std::string const &commander, int action, std::string const &mode);	// Client &commander
+	void op(std::string const &commander, int action, std::string const &nickname); // Client &commander
+	void topic(std::string const &commander, int action, std::string const &topic);
 
 	std::map<std::string, Client *> get_clients() const;
 	std::vector<std::string> get_ops() const;

@@ -65,7 +65,7 @@ void Channel::kick(const std::string &commander, std::string const &nickname)
 	// send message to client that he has been kicked
 }
 
-void Channel::mode(int action, const std::string &commander, std::string const &mode)
+void Channel::mode(const std::string &commander, int action, std::string const &mode)
 {
 	if (!is_op(commander))
 	{
@@ -78,7 +78,7 @@ void Channel::mode(int action, const std::string &commander, std::string const &
 		remove_mode(mode);
 }
 
-void Channel::op(int action, const std::string &commander, std::string const &nickname)
+void Channel::op(const std::string &commander, int action, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -95,6 +95,29 @@ void Channel::op(int action, const std::string &commander, std::string const &ni
 		this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), nickname), this->ops.end());
 	}
 	// todo: messages?
+}
+
+void Channel::topic(const std::string &commander, int action, std::string const &topic)
+{
+	if (action == ADD)
+	{
+		if (!is_op(commander))
+		{
+			std::cerr << "Client could not set topic: not an op" << std::endl;
+			return;
+		}
+		// set topic
+	}
+	else if (action == REMOVE)
+	{
+		if (!is_op(commander))
+		{
+			std::cerr << "Client could not remove topic: not an op" << std::endl;
+			return;
+		}
+		// remove topic
+	}
+	// view topic
 }
 
 int main()
