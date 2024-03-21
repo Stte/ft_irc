@@ -8,14 +8,14 @@ Channel::Channel(std::string const &name, Client &client, Server &server) : name
 	this->ops.push_back(client.get_nickname());
 }
 
-void Channel::join(Client &client)
+void Channel::join(Client &client, std::string const &key)
 {
 	if (!invite_check(client))
 	{
 		std::cerr << "Client could not join channel: invite only" << std::endl;
 		return;
 	}
-	if (!key_check(client))
+	if (!key_check(key))
 	{
 		std::cerr << "Client could not join channel: wrong key" << std::endl;
 		return;
@@ -120,39 +120,10 @@ void Channel::topic(const std::string &commander, int action, std::string const 
 	// view topic
 }
 
-int main()
+void Channel::broadcast(std::string const &message)
 {
-	Server server(1, "test");
-	Client client("test", "test1", 1);
-	Channel channel("test", client, server);
-
-	Client client2("test2", "test2", 2);
-	channel.join(client2);
-
-	// print ops
-	std::vector<std::string> ops = channel.get_ops();
-	for (std::vector<std::string>::iterator it = ops.begin(); it != ops.end(); ++it)
-	{
-		std::cout << *it << std::endl;
-	}
-
-	// print clients
-	std::map<std::string, Client *> clients = channel.get_clients();
 	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
-		std::cout << it->first << " => " << it->second->get_nickname() << std::endl;
+		// server.send_response(RPL_BROADCASTMSG(it->first, this->name, message), it->second->get_fd());
 	}
-
-	channel.kick("test", "test2");
-
-	std::cout << "After kick" << std::endl;
-
-	// print clients
-	clients = channel.get_clients();
-	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
-	{
-		std::cout << it->first << " => " << it->second->get_nickname() << std::endl;
-	}
-
-	return 0;
 }

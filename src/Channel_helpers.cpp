@@ -26,6 +26,16 @@ unsigned char Channel::get_modes()
 
 /// SETTERS ///
 
+void Channel::set_key(std::string const &commander, std::string const &key)
+{
+	if (!is_op(commander))
+	{
+		std::cerr << "Client could not set key: not an op" << std::endl;
+		return;
+	}
+	this->key = key;
+}
+
 void Channel::set_limit(std::string const &commander, unsigned int limit)
 {
 	if (!is_op(commander))
@@ -53,16 +63,16 @@ bool Channel::invite_check(Client &client)
 }
 
 /// @brief Checks if the channel is key protected and if the client has the correct key
-/// @param client
+/// @param key string
 /// @return true if the channel is not key protected or if the client has the correct key
-bool Channel::key_check(Client &client) // todo: check if this is correct
+bool Channel::key_check(std::string const &key) // todo: check if this is correct
 {
-	// if (this->modes & MODE_K) // if channel is key protected
-	// {
-	// 	if (this->key == client.get_buffer())
-	// 		return (true); // if client has the correct key
-	// 	return (false);	   // if client has the wrong key
-	// }
+	if (this->modes & MODE_K) // if channel is key protected
+	{
+		if (this->key == key)
+			return (true); // if client has the correct key
+		return (false);	   // if client has the wrong key
+	}
 	return (true); // if channel is not key protected
 }
 
