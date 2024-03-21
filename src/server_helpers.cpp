@@ -52,6 +52,51 @@ void Server::send_response(std::string response, int fd)
 	if (send(fd, response.c_str(), response.size(), 0) == -1)
 		std::cerr << "Response send() faild" << std::endl;
 }
+
+const Client *Server::findClient(std::string &nickname) const
+{
+	for (const Client &e : clients)
+			{
+				if (e.get_nickname() ==  nickname)
+					return &e;
+			}
+	return nullptr;
+}
+
+void Server::send_response(rType responseType, std::string recipient, std::string response)
+{
+	switch (responseType)
+	{
+		case rType::ClientToChannel:
+		// for (auto ch : channels)
+		// {
+		// 	if (ch.get_name() == recipient)
+		//	{
+		// 		for (auto e ; ch.clients)
+		// 		{
+		// 			if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
+		//				std::cerr << "Response send() faild to user: " << e.get_nickname() << std::endl;
+		// 		}
+		//	}
+		//	return ;
+		//
+		// }
+		break ;
+		case rType::ClientToClient:
+		case rType::ServerToClient:
+		{
+			const Client *findRecipient = findClient(recipient);
+			if (findRecipient == nullptr)
+				return ;
+			else
+			{
+				if (send(findRecipient->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() faild to user: " << findRecipient->get_nickname() << std::endl;
+			}
+			return ; // I am thinking here it should throw, because so the requester gets a notification that user was not found
+		}
+	}
+}
 // Get the specific client
 Client *Server::get_client(int fd)
 {
@@ -65,7 +110,7 @@ std::string Server::get_name()
 {
 	return (this->name);
 }
-// // Spliting each of clients input to vector of vector of strings
+// Spliting each of clients input to vector of vector of strings
 std::vector<std::string> Server::split_recived_buffer(std::string str)
 {
 	size_t	pos;
@@ -82,16 +127,3 @@ std::vector<std::string> Server::split_recived_buffer(std::string str)
 	}
 	return (vec);
 }
-// Spliting the input to strings
-// std::vector<std::string> Server::split_cmd(std::string cmd)
-// {
-// 	std::vector<std::string> vec;
-// 	std::istringstream input(cmd); // input stream to get every token
-// 	std::string token;
-// 	while (input >> token)
-// 	{
-// 		vec.push_back(token);
-// 		token.clear();
-// 	}
-// 	return (vec);
-// }

@@ -35,12 +35,12 @@ public:
 	void set_registered(bool value);
 
 	// Getter
-	int get_fd();
+	int get_fd() const;
 	bool is_registered();
-	std::string get_nickname();
-	std::string get_username();
-	std::string get_buffer();
-	std::string get_IPaddr();
+	std::string get_nickname() const;
+	std::string get_username() const;
+	std::string get_buffer() const;
+	std::string get_IPaddr() const;
 
 	// Methods
 	void clear_buffer();

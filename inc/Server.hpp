@@ -23,26 +23,11 @@
 #define GREEN "\e[1;32m"
 #define YELLOW "\e[1;33m"
 
-// enum IRCCommand {
-//     JOIN,
-//     NICK,
-//     USER,
-//     PASS,
-//     CAP,
-//     MOTD,
-//     MODE,
-//     KICK,
-//     PING,
-//     PONG,
-//     INVITE,
-//     PRIVMSG,
-//     QUIT,
-//     TOPIC,
-//     PART,
-//     WHO,
-//     WHOIS,
-// 		ERROR,
-// };
+enum rType {
+    ClientToClient,
+	ClientToChannel,
+	ServerToClient,
+};
 
 class Server
 {
@@ -54,6 +39,7 @@ class Server
 		static bool signal;
 		std::vector<Client> clients;
 		std::vector<struct pollfd> fds;
+		const Client *findClient(std::string &nickname) const;
 
 
 	public:
@@ -73,9 +59,9 @@ class Server
 		void remove_client(int fd);
 		static void handle_signal(int sig);
 		void send_response(std::string response, int fd);
+		void send_response(rType responseType, std::string recipient, std::string response);
 		std::vector<std::string> split_recived_buffer(std::string str);
 		void exec_cmd(Message &newmsg, int fd);
-		std::vector<std::string> split_cmd(std::string cmd);
 		bool nickname_in_use(std::string &nickname);
 		bool is_valid_nickname(std::string &nickname);
 
@@ -87,6 +73,7 @@ class Server
 		void username(std::vector<std::string> username, int fd);
 		void join(std::string cmd, int fd);
 		void pass(std::string pass, int fd);
+		void quit(int fd);
 
 };
 
