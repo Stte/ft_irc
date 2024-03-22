@@ -21,9 +21,11 @@ enum ModeAction
 	VIEW
 };
 
+class Server;
 class Channel
 {
 public:
+	Channel();
 	Channel(std::string const &name, Client &client, Server &server);
 
 	void join(Client &client, std::string const &key);

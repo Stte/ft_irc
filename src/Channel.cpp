@@ -1,5 +1,9 @@
 #include "Channel.hpp"
 
+Channel::Channel() : name(""), server(*(new Server(0, ""))), modes(0), limit(0)
+{
+}
+
 Channel::Channel(std::string const &name, Client &client, Server &server) : name(name), server(server), modes(0), limit(0)
 {
 	// do name check?
@@ -99,6 +103,7 @@ void Channel::op(const std::string &commander, int action, std::string const &ni
 
 void Channel::topic(const std::string &commander, int action, std::string const &topic)
 {
+	(void)topic;
 	if (action == ADD)
 	{
 		if (!is_op(commander))
@@ -122,8 +127,10 @@ void Channel::topic(const std::string &commander, int action, std::string const 
 
 void Channel::broadcast(std::string const &message)
 {
+
 	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
+		(void)message;
 		// server.send_response(RPL_BROADCASTMSG(it->first, this->name, message), it->second->get_fd());
 	}
 }
