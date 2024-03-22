@@ -30,11 +30,11 @@ public:
 
 	void join(Client &client, std::string const &key);
 	// void part(Client &client);
-	void invite(std::string const &commander, std::string const &nickname); // maybe Client &commander
-	void kick(std::string const &commander, std::string const &nickname);
-	void mode(std::string const &commander, int action, std::string const &mode);	// Client &commander
-	void op(std::string const &commander, int action, std::string const &nickname); // Client &commander
-	void topic(std::string const &commander, int action, std::string const &topic);
+	void invite(Client &commander, std::string const &nickname);
+	void kick(Client &commander, std::string const &nickname);
+	void mode(Client &commander, int action, std::string const &mode);
+	void op(Client &commander, int action, std::string const &nickname);
+	void topic(Client &commander, int action, std::string const &topic);
 	// void quit(std::string const &nickname);
 
 	void broadcast(std::string const &message);
@@ -43,10 +43,10 @@ public:
 	std::vector<std::string> get_ops() const;
 	unsigned char get_modes();
 
-	void set_key(std::string const &commander, std::string const &key);
-	void set_limit(std::string const &commander, unsigned int limit);
+	void set_key(Client &commander, std::string const &key);
+	void set_limit(Client &commander, unsigned int limit);
 
-	bool is_op(std::string const &commander); // Client &commander
+	bool is_op(Client &client);
 
 private:
 	std::string name;

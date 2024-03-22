@@ -1,8 +1,8 @@
 #include "Channel.hpp"
 
-bool Channel::is_op(std::string const &nickname)
+bool Channel::is_op(Client &client)
 {
-	if (std::find(this->ops.begin(), this->ops.end(), nickname) != this->ops.end())
+	if (std::find(this->ops.begin(), this->ops.end(), client.get_nickname()) != this->ops.end())
 		return (true);
 	return (false);
 }
@@ -26,7 +26,7 @@ unsigned char Channel::get_modes()
 
 /// SETTERS ///
 
-void Channel::set_key(std::string const &commander, std::string const &key)
+void Channel::set_key(Client &commander, std::string const &key)
 {
 	if (!is_op(commander))
 	{
@@ -36,7 +36,7 @@ void Channel::set_key(std::string const &commander, std::string const &key)
 	this->key = key;
 }
 
-void Channel::set_limit(std::string const &commander, unsigned int limit)
+void Channel::set_limit(Client &commander, unsigned int limit)
 {
 	if (!is_op(commander))
 	{

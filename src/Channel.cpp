@@ -39,7 +39,7 @@ void Channel::join(Client &client, std::string const &key)
 	// server.send_response(RPL_JOINMSG(client.get_username(), client.get_IPaddr(), this->name), client.get_fd());
 }
 
-void Channel::invite(const std::string &commander, std::string const &nickname)
+void Channel::invite(Client &commander, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -58,7 +58,7 @@ void Channel::invite(const std::string &commander, std::string const &nickname)
 	// send message to client that he has been invited
 }
 
-void Channel::kick(const std::string &commander, std::string const &nickname)
+void Channel::kick(Client &commander, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -69,7 +69,7 @@ void Channel::kick(const std::string &commander, std::string const &nickname)
 	// send message to client that he has been kicked
 }
 
-void Channel::mode(const std::string &commander, int action, std::string const &mode)
+void Channel::mode(Client &commander, int action, std::string const &mode)
 {
 	if (!is_op(commander))
 	{
@@ -82,7 +82,7 @@ void Channel::mode(const std::string &commander, int action, std::string const &
 		remove_mode(mode);
 }
 
-void Channel::op(const std::string &commander, int action, std::string const &nickname)
+void Channel::op(Client &commander, int action, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -101,7 +101,7 @@ void Channel::op(const std::string &commander, int action, std::string const &ni
 	// todo: messages?
 }
 
-void Channel::topic(const std::string &commander, int action, std::string const &topic)
+void Channel::topic(Client &commander, int action, std::string const &topic)
 {
 	(void)topic;
 	if (action == ADD)
