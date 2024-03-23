@@ -26,7 +26,7 @@ class Channel
 {
 public:
 	Channel();
-	Channel(std::string const &name, Client &client, Server &server);
+	Channel(std::string const &name, Client *client, Server &server);
 
 	void join(Client &client, std::string const &key);
 	// void part(Client &client);
@@ -36,8 +36,7 @@ public:
 	void op(Client &commander, int action, std::string const &nickname);
 	void topic(Client &commander, int action, std::string const &topic);
 	// void quit(std::string const &nickname);
-
-	void broadcast(std::string const &message);
+	void message(Client &sender, std::string const &message);
 
 	std::map<std::string, Client *> get_clients() const;
 	std::vector<std::string> get_ops() const;
@@ -64,5 +63,7 @@ private:
 
 	void add_mode(std::string const &mode);
 	void remove_mode(std::string const &mode);
+
+	void broadcast(std::string const &message);
 };
 #endif

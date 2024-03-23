@@ -114,3 +114,13 @@ void Channel::remove_mode(std::string const &mode)
 	else
 		std::cerr << "Unknown mode" << std::endl;
 }
+
+void Channel::broadcast(std::string const &message)
+{
+	std::cout << "Broadcasting: " << message << std::endl;
+	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		std::cout << "Sending to: " << it->first << " // fd: " << it->second->get_fd() << std::endl;
+		server.send_response(message, it->second->get_fd());
+	}
+}

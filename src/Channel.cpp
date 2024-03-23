@@ -4,12 +4,12 @@ Channel::Channel() : name(""), server(*(new Server(0, ""))), modes(0), limit(0)
 {
 }
 
-Channel::Channel(std::string const &name, Client &client, Server &server) : name(name), server(server), modes(0), limit(0)
+Channel::Channel(std::string const &name, Client *client, Server &server) : name(name), server(server), modes(0), limit(0)
 {
 	// do name check?
 	// check that server is valid
-	this->clients[client.get_nickname()] = &client;
-	this->ops.push_back(client.get_nickname());
+	this->clients[client->get_nickname()] = client;
+	this->ops.push_back(client->get_nickname());
 }
 
 void Channel::join(Client &client, std::string const &key)
@@ -35,8 +35,7 @@ void Channel::join(Client &client, std::string const &key)
 		return;
 	}
 	this->clients[client.get_nickname()] = &client;
-	// broadcast a message to all clients in the channel that the client has joined
-	// server.send_response(RPL_JOINMSG(client.get_username(), client.get_IPaddr(), this->name), client.get_fd());
+	broadcast(CLIENT(client.get_nickname(), client.get_username(), client.get_IPaddr()) + " JOIN " + this->name + CRLF);
 }
 
 void Channel::invite(Client &commander, std::string const &nickname)
@@ -46,12 +45,11 @@ void Channel::invite(Client &commander, std::string const &nickname)
 		std::cerr << "Client could not invite: not an op" << std::endl;
 		return;
 	}
-	// check if client exists
-	// if (server.get_client(nickname) == NULL)
-	// {
-	// 	std::cerr << "Client could not invite: client does not exist" << std::endl;
-	// 	return;
-	// }
+	if (server.get_client(nickname) == NULL)
+	{
+		std::cerr << "Client could not invite: client does not exist" << std::endl;
+		return;
+	}
 
 	if (std::find(this->invite_list.begin(), this->invite_list.end(), nickname) == this->invite_list.end())
 		this->invite_list.push_back(nickname);
@@ -125,12 +123,13 @@ void Channel::topic(Client &commander, int action, std::string const &topic)
 	// view topic
 }
 
-void Channel::broadcast(std::string const &message)
+void Channel::message(Client &sender, std::string const &message)
 {
-
-	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	if (this->clients[sender.get_nickname()] == NULL)
 	{
-		(void)message;
-		// server.send_response(RPL_BROADCASTMSG(it->first, this->name, message), it->second->get_fd());
+		server.send_response(ERR_NOTONCHANNEL(this->name), sender.get_fd());
+		return;
 	}
+	// Broadcasts to all including the sender
+	broadcast(RPL_PRIVMSG(CLIENT(sender.get_nickname(), sender.get_username(), sender.get_IPaddr()), this->name, message));
 }

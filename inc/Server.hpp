@@ -50,6 +50,7 @@ public:
 
 	// Getters
 	Client *get_client(int fd);
+	Client *get_client(std::string nickname);
 	std::string get_name();
 
 	// Methods
@@ -75,6 +76,7 @@ public:
 	void join(Message &cmd, int fd);
 	void pass(std::string pass, int fd);
 	void quit(int fd);
+	void privmsg(Message &cmd, int fd);
 };
 
 #endif

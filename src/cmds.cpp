@@ -103,7 +103,7 @@ void Server::join(Message &cmd, int fd)
 	// check if channel exists and if not create it
 	if (channels.find(cmd.getParams().front()) == channels.end())
 	{
-		Channel new_channel(cmd.getParams().front(), *user, *this);
+		Channel new_channel(cmd.getParams().front(), user, *this);
 		channels.insert(std::pair<std::string, Channel>(cmd.getParams().front(), new_channel));
 	}
 	else
@@ -127,4 +127,42 @@ void Server::quit(int fd)
 	this->remove_client(fd);
 	close(fd);
 	return;
+}
+
+void Server::privmsg(Message &cmd, int fd)
+{
+	Client *user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 2)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (cmd.getParams().front()[0] == '#') // if the first parameter is a channel
+	{
+		if (channels.find(cmd.getParams().front()) == channels.end())
+		{
+			this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+			return;
+		}
+		else
+			channels[cmd.getParams().front()].message(*user, cmd.getParams()[1]);
+	}
+	else
+	{
+		if (get_client(cmd.getParams().front()) == NULL)
+		{
+			this->send_response(ERR_NOSUCHNICK(user->get_nickname(), cmd.getParams().front()), fd);
+			return;
+		}
+		else
+		{
+			Client *recipient = get_client(cmd.getParams().front());
+			this->send_response(RPL_PRIVMSG(CLIENT(user->get_nickname(), user->get_username(), user->get_IPaddr()), recipient->get_nickname(), cmd.getParams()[1]), recipient->get_fd());
+		}
+	}
 }
