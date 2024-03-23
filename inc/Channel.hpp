@@ -2,7 +2,6 @@
 #define CHANNEL_H
 
 #include <string>
-#include <map>
 #include <vector>
 #include <algorithm>
 #include "Client.hpp"
@@ -39,21 +38,21 @@ public:
 	// void quit(std::string const &nickname);
 	void message(std::shared_ptr<Client> sender, std::string const &message);
 
-	std::map<std::string, std::shared_ptr<Client>> get_clients() const;
-	std::vector<std::string> get_ops() const;
+	std::vector<std::shared_ptr<Client>> get_clients() const;
+	std::vector<std::shared_ptr<Client>> get_ops() const;
 	unsigned char get_modes();
 
 	void set_key(std::shared_ptr<Client> commander, std::string const &key);
 	void set_limit(std::shared_ptr<Client> commander, unsigned int limit);
 
-	bool is_op(std::shared_ptr<Client> client);
+	// bool is_op(std::shared_ptr<Client> client);
 
 private:
 	std::string name;
 	Server &server;
-	std::map<std::string, std::shared_ptr<Client>> clients;
-	std::vector<std::string> ops;
-	std::vector<std::string> invite_list;
+	std::vector<std::shared_ptr<Client>> clients;
+	std::vector<std::shared_ptr<Client>> ops;
+	std::vector<std::shared_ptr<Client>> invite_list;
 	std::string key;
 	unsigned char modes;
 	unsigned int limit;
@@ -66,5 +65,21 @@ private:
 	void remove_mode(std::string const &mode);
 
 	void broadcast(std::string const &message);
+	void broadcast(std::shared_ptr<Client> sender, std::string const &message);
+
+	std::shared_ptr<Client> get_client(std::shared_ptr<Client> client);
+	std::shared_ptr<Client> get_client(std::string const &nickname);
+	void add_client(std::shared_ptr<Client> client);
+	void remove_client(std::string const &nickname);
+
+	std::shared_ptr<Client> get_op(std::shared_ptr<Client> client);
+	std::shared_ptr<Client> get_op(std::string const &nickname);
+	void add_op(std::shared_ptr<Client> client);
+	void remove_op(std::string const &nickname);
+
+	std::shared_ptr<Client> get_invite(std::shared_ptr<Client> client);
+	std::shared_ptr<Client> get_invite(std::string const &nickname);
+	void add_invite(std::shared_ptr<Client> client);
+	void remove_invite(std::string const &nickname);
 };
 #endif

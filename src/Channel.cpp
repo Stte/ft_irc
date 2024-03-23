@@ -8,8 +8,8 @@ Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server
 {
 	// do name check?
 	// check that server is valid
-	this->clients[client->get_nickname()] = client;
-	this->ops.push_back(client->get_nickname());
+	add_client(client);
+	add_op(client);
 }
 
 void Channel::join(std::shared_ptr<Client> client, std::string const &key)
@@ -29,18 +29,18 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 		std::cerr << "Client could not join channel: channel is full" << std::endl;
 		return;
 	}
-	if (this->clients[client->get_nickname()] != NULL)
+	if (get_client(client->get_nickname()) != NULL)
 	{
 		std::cerr << "Client could not join channel: client already in channel" << std::endl;
 		return;
 	}
-	this->clients[client->get_nickname()] = client;
+	add_client(client);
 	broadcast(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()) + " JOIN " + this->name + CRLF);
 }
 
 void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickname)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not invite: not an op" << std::endl;
 		return;
@@ -51,25 +51,32 @@ void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickn
 		return;
 	}
 
-	if (std::find(this->invite_list.begin(), this->invite_list.end(), nickname) == this->invite_list.end())
-		this->invite_list.push_back(nickname);
+	if (get_invite(nickname) == NULL)
+	{
+		std::shared_ptr<Client> client = server.get_client(nickname);
+		if (client == NULL)
+		{
+			std::cerr << "Client could not invite: client does not exist" << std::endl;
+			return;
+		}
+		add_invite(client);
+	}
 	// send message to client that he has been invited
 }
 
 void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not kick: not an op" << std::endl;
 		return;
 	}
-	this->clients.erase(nickname);
-	// send message to client that he has been kicked
+	remove_client(nickname);
 }
 
 void Channel::mode(std::shared_ptr<Client> commander, int action, std::string const &mode)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not set mode: not an op" << std::endl;
 		return;
@@ -82,19 +89,27 @@ void Channel::mode(std::shared_ptr<Client> commander, int action, std::string co
 
 void Channel::op(std::shared_ptr<Client> commander, int action, std::string const &nickname)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not op: not an op" << std::endl;
 		return;
 	}
 	if (action == ADD)
 	{
-		if (std::find(this->ops.begin(), this->ops.end(), nickname) == this->ops.end())
-			this->ops.push_back(nickname);
+		if (get_op(nickname) == NULL)
+		{
+			std::shared_ptr<Client> client = server.get_client(nickname);
+			if (client == NULL)
+			{
+				std::cerr << "Client could not op: client does not exist" << std::endl;
+				return;
+			}
+			add_op(client);
+		}
 	}
 	else if (action == REMOVE)
 	{
-		this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), nickname), this->ops.end());
+		remove_op(nickname);
 	}
 	// todo: messages?
 }
@@ -104,7 +119,7 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 	(void)topic;
 	if (action == ADD)
 	{
-		if (!is_op(commander))
+		if (!get_op(commander))
 		{
 			std::cerr << "Client could not set topic: not an op" << std::endl;
 			return;
@@ -113,7 +128,7 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 	}
 	else if (action == REMOVE)
 	{
-		if (!is_op(commander))
+		if (!get_op(commander))
 		{
 			std::cerr << "Client could not remove topic: not an op" << std::endl;
 			return;
@@ -125,11 +140,11 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 
 void Channel::message(std::shared_ptr<Client> sender, std::string const &message)
 {
-	if (this->clients[sender->get_nickname()] == NULL)
+	if (get_client(sender) == NULL)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), sender->get_fd());
 		return;
 	}
-	// Broadcasts to all including the sender
-	broadcast(RPL_PRIVMSG(CLIENT(sender->get_nickname(), sender->get_username(), sender->get_IPaddr()), this->name, message));
+	// Broadcasts to all exlude sender
+	broadcast(sender, RPL_PRIVMSG(CLIENT(sender->get_nickname(), sender->get_username(), sender->get_IPaddr()), this->name, message));
 }

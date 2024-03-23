@@ -19,6 +19,7 @@
 #include "Message.hpp"
 #include "Channel.hpp"
 #include <memory>
+#include <map>
 
 #define RED "\e[1;31m"
 #define WHITE "\e[0;37m"

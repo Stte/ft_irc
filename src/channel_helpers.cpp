@@ -1,23 +1,146 @@
 #include "Channel.hpp"
 
-bool Channel::is_op(std::shared_ptr<Client> client)
-{
-	if (std::find(this->ops.begin(), this->ops.end(), client->get_nickname()) != this->ops.end())
-		return (true);
-	return (false);
-}
+/// CLIENTS ///
 
-/// GETTERS ///
-
-std::map<std::string, std::shared_ptr<Client>> Channel::get_clients() const
+std::vector<std::shared_ptr<Client>> Channel::get_clients() const
 {
 	return (this->clients);
 }
 
-std::vector<std::string> Channel::get_ops() const
+std::shared_ptr<Client> Channel::get_client(std::string const &nickname)
+{
+	for (const auto &client : clients)
+	{
+		if (client->get_nickname() == nickname)
+			return (client);
+	}
+	return (nullptr);
+}
+
+std::shared_ptr<Client> Channel::get_client(std::shared_ptr<Client> client)
+{
+	for (const auto &c : clients)
+	{
+		if (c == client)
+			return (c);
+	}
+	return (nullptr);
+}
+
+void Channel::add_client(std::shared_ptr<Client> client)
+{
+	if (get_client(client->get_nickname()) != nullptr)
+	{
+		std::cerr << "Client already in channel" << std::endl;
+		return;
+	}
+	this->clients.push_back(client);
+}
+
+void Channel::remove_client(std::string const &nickname)
+{
+	std::shared_ptr<Client> client = get_client(nickname);
+	if (!client)
+	{
+		std::cerr << "Client not in channel" << std::endl;
+		return;
+	}
+	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
+	// send message to client that he has been kicked
+}
+
+/// OPS ///
+
+std::vector<std::shared_ptr<Client>> Channel::get_ops() const
 {
 	return (this->ops);
 }
+
+std::shared_ptr<Client> Channel::get_op(std::string const &nickname)
+{
+	for (const auto &op : ops)
+	{
+		if (op->get_nickname() == nickname)
+			return (op);
+	}
+	return (nullptr);
+}
+
+std::shared_ptr<Client> Channel::get_op(std::shared_ptr<Client> client)
+{
+	for (const auto &op : ops)
+	{
+		if (op == client)
+			return (op);
+	}
+	return (nullptr);
+}
+
+void Channel::add_op(std::shared_ptr<Client> client)
+{
+	if (get_op(client->get_nickname()) != nullptr)
+	{
+		std::cerr << "Client already op" << std::endl;
+		return;
+	}
+	this->ops.push_back(client);
+}
+
+void Channel::remove_op(std::string const &nickname)
+{
+	std::shared_ptr<Client> op = get_op(nickname);
+	if (!op)
+	{
+		std::cerr << "Client not op" << std::endl;
+		return;
+	}
+	this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), op), this->ops.end());
+}
+
+/// INVITES ///
+
+std::shared_ptr<Client> Channel::get_invite(std::string const &nickname)
+{
+	for (const auto &invite : invite_list)
+	{
+		if (invite->get_nickname() == nickname)
+			return (invite);
+	}
+	return (nullptr);
+}
+
+std::shared_ptr<Client> Channel::get_invite(std::shared_ptr<Client> client)
+{
+	for (const auto &invite : invite_list)
+	{
+		if (invite == client)
+			return (invite);
+	}
+	return (nullptr);
+}
+
+void Channel::add_invite(std::shared_ptr<Client> client)
+{
+	if (get_invite(client->get_nickname()) != nullptr)
+	{
+		std::cerr << "Client already invited" << std::endl;
+		return;
+	}
+	this->invite_list.push_back(client);
+}
+
+void Channel::remove_invite(std::string const &nickname)
+{
+	std::shared_ptr<Client> client = get_invite(nickname);
+	if (!client)
+	{
+		std::cerr << "Client not invited" << std::endl;
+		return;
+	}
+	this->invite_list.erase(std::remove(this->invite_list.begin(), this->invite_list.end(), client), this->invite_list.end());
+}
+
+/// GETTERS ///
 
 unsigned char Channel::get_modes()
 {
@@ -28,7 +151,7 @@ unsigned char Channel::get_modes()
 
 void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not set key: not an op" << std::endl;
 		return;
@@ -38,7 +161,7 @@ void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
 
 void Channel::set_limit(std::shared_ptr<Client> commander, unsigned int limit)
 {
-	if (!is_op(commander))
+	if (!get_op(commander))
 	{
 		std::cerr << "Client could not set limit: not an op" << std::endl;
 		return;
@@ -55,7 +178,7 @@ bool Channel::invite_check(std::shared_ptr<Client> client)
 {
 	if (this->modes & MODE_I) // if channel is invite only
 	{
-		if (std::find(this->invite_list.begin(), this->invite_list.end(), client->get_nickname()) != this->invite_list.end())
+		if (get_invite(client) != nullptr)
 			return (true); // if client is in invite list
 		return (false);	   // if client is not in invite list
 	}
@@ -118,9 +241,23 @@ void Channel::remove_mode(std::string const &mode)
 void Channel::broadcast(std::string const &message)
 {
 	std::cout << "Broadcasting: " << message << std::endl;
-	for (std::map<std::string, std::shared_ptr<Client>>::iterator it = clients.begin(); it != clients.end(); ++it)
+
+	for (const auto &client : clients)
 	{
-		std::cout << "Sending to: " << it->first << " // fd: " << it->second->get_fd() << std::endl;
-		server.send_response(message, it->second->get_fd());
+		std::cout << "Sending to: " << client->get_nickname() << " // fd: " << client->get_fd() << std::endl;
+		server.send_response(message, client->get_fd());
+	}
+}
+
+void Channel::broadcast(std::shared_ptr<Client> sender, std::string const &message)
+{
+	std::cout << "Broadcasting: " << message << std::endl;
+
+	for (const auto &client : clients)
+	{
+		if (client == sender)
+			continue;
+		std::cout << "Sending to: " << client->get_nickname() << " // fd: " << client->get_fd() << std::endl;
+		server.send_response(message, client->get_fd());
 	}
 }
