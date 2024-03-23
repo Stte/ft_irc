@@ -4,7 +4,7 @@ Channel::Channel() : name(""), server(*(new Server(0, ""))), modes(0), limit(0)
 {
 }
 
-Channel::Channel(std::string const &name, Client *client, Server &server) : name(name), server(server), modes(0), limit(0)
+Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), modes(0), limit(0)
 {
 	// do name check?
 	// check that server is valid
@@ -12,7 +12,7 @@ Channel::Channel(std::string const &name, Client *client, Server &server) : name
 	this->ops.push_back(client->get_nickname());
 }
 
-void Channel::join(Client &client, std::string const &key)
+void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 {
 	if (!invite_check(client))
 	{
@@ -29,16 +29,16 @@ void Channel::join(Client &client, std::string const &key)
 		std::cerr << "Client could not join channel: channel is full" << std::endl;
 		return;
 	}
-	if (this->clients[client.get_nickname()] != NULL)
+	if (this->clients[client->get_nickname()] != NULL)
 	{
 		std::cerr << "Client could not join channel: client already in channel" << std::endl;
 		return;
 	}
-	this->clients[client.get_nickname()] = &client;
-	broadcast(CLIENT(client.get_nickname(), client.get_username(), client.get_IPaddr()) + " JOIN " + this->name + CRLF);
+	this->clients[client->get_nickname()] = client;
+	broadcast(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()) + " JOIN " + this->name + CRLF);
 }
 
-void Channel::invite(Client &commander, std::string const &nickname)
+void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -56,7 +56,7 @@ void Channel::invite(Client &commander, std::string const &nickname)
 	// send message to client that he has been invited
 }
 
-void Channel::kick(Client &commander, std::string const &nickname)
+void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -67,7 +67,7 @@ void Channel::kick(Client &commander, std::string const &nickname)
 	// send message to client that he has been kicked
 }
 
-void Channel::mode(Client &commander, int action, std::string const &mode)
+void Channel::mode(std::shared_ptr<Client> commander, int action, std::string const &mode)
 {
 	if (!is_op(commander))
 	{
@@ -80,7 +80,7 @@ void Channel::mode(Client &commander, int action, std::string const &mode)
 		remove_mode(mode);
 }
 
-void Channel::op(Client &commander, int action, std::string const &nickname)
+void Channel::op(std::shared_ptr<Client> commander, int action, std::string const &nickname)
 {
 	if (!is_op(commander))
 	{
@@ -99,7 +99,7 @@ void Channel::op(Client &commander, int action, std::string const &nickname)
 	// todo: messages?
 }
 
-void Channel::topic(Client &commander, int action, std::string const &topic)
+void Channel::topic(std::shared_ptr<Client> commander, int action, std::string const &topic)
 {
 	(void)topic;
 	if (action == ADD)
@@ -123,13 +123,13 @@ void Channel::topic(Client &commander, int action, std::string const &topic)
 	// view topic
 }
 
-void Channel::message(Client &sender, std::string const &message)
+void Channel::message(std::shared_ptr<Client> sender, std::string const &message)
 {
-	if (this->clients[sender.get_nickname()] == NULL)
+	if (this->clients[sender->get_nickname()] == NULL)
 	{
-		server.send_response(ERR_NOTONCHANNEL(this->name), sender.get_fd());
+		server.send_response(ERR_NOTONCHANNEL(this->name), sender->get_fd());
 		return;
 	}
 	// Broadcasts to all including the sender
-	broadcast(RPL_PRIVMSG(CLIENT(sender.get_nickname(), sender.get_username(), sender.get_IPaddr()), this->name, message));
+	broadcast(RPL_PRIVMSG(CLIENT(sender->get_nickname(), sender->get_username(), sender->get_IPaddr()), this->name, message));
 }

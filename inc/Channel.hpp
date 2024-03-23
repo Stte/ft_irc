@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "Client.hpp"
 #include "Server.hpp"
+#include <memory>
 
 #define MODE_I 0b00000001
 #define MODE_K 0b00000010
@@ -26,38 +27,38 @@ class Channel
 {
 public:
 	Channel();
-	Channel(std::string const &name, Client *client, Server &server);
+	Channel(std::string const &name, std::shared_ptr<Client> client, Server &server);
 
-	void join(Client &client, std::string const &key);
+	void join(std::shared_ptr<Client> client, std::string const &key);
 	// void part(Client &client);
-	void invite(Client &commander, std::string const &nickname);
-	void kick(Client &commander, std::string const &nickname);
-	void mode(Client &commander, int action, std::string const &mode);
-	void op(Client &commander, int action, std::string const &nickname);
-	void topic(Client &commander, int action, std::string const &topic);
+	void invite(std::shared_ptr<Client> commander, std::string const &nickname);
+	void kick(std::shared_ptr<Client> commander, std::string const &nickname);
+	void mode(std::shared_ptr<Client> commander, int action, std::string const &mode);
+	void op(std::shared_ptr<Client> commander, int action, std::string const &nickname);
+	void topic(std::shared_ptr<Client> commander, int action, std::string const &topic);
 	// void quit(std::string const &nickname);
-	void message(Client &sender, std::string const &message);
+	void message(std::shared_ptr<Client> sender, std::string const &message);
 
-	std::map<std::string, Client *> get_clients() const;
+	std::map<std::string, std::shared_ptr<Client>> get_clients() const;
 	std::vector<std::string> get_ops() const;
 	unsigned char get_modes();
 
-	void set_key(Client &commander, std::string const &key);
-	void set_limit(Client &commander, unsigned int limit);
+	void set_key(std::shared_ptr<Client> commander, std::string const &key);
+	void set_limit(std::shared_ptr<Client> commander, unsigned int limit);
 
-	bool is_op(Client &client);
+	bool is_op(std::shared_ptr<Client> client);
 
 private:
 	std::string name;
 	Server &server;
-	std::map<std::string, Client *> clients;
+	std::map<std::string, std::shared_ptr<Client>> clients;
 	std::vector<std::string> ops;
 	std::vector<std::string> invite_list;
 	std::string key;
 	unsigned char modes;
 	unsigned int limit;
 
-	bool invite_check(Client &client);
+	bool invite_check(std::shared_ptr<Client> client);
 	bool key_check(std::string const &key);
 	bool limit_check();
 

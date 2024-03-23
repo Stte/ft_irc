@@ -1,15 +1,15 @@
 #include "Channel.hpp"
 
-bool Channel::is_op(Client &client)
+bool Channel::is_op(std::shared_ptr<Client> client)
 {
-	if (std::find(this->ops.begin(), this->ops.end(), client.get_nickname()) != this->ops.end())
+	if (std::find(this->ops.begin(), this->ops.end(), client->get_nickname()) != this->ops.end())
 		return (true);
 	return (false);
 }
 
 /// GETTERS ///
 
-std::map<std::string, Client *> Channel::get_clients() const
+std::map<std::string, std::shared_ptr<Client>> Channel::get_clients() const
 {
 	return (this->clients);
 }
@@ -26,7 +26,7 @@ unsigned char Channel::get_modes()
 
 /// SETTERS ///
 
-void Channel::set_key(Client &commander, std::string const &key)
+void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
 {
 	if (!is_op(commander))
 	{
@@ -36,7 +36,7 @@ void Channel::set_key(Client &commander, std::string const &key)
 	this->key = key;
 }
 
-void Channel::set_limit(Client &commander, unsigned int limit)
+void Channel::set_limit(std::shared_ptr<Client> commander, unsigned int limit)
 {
 	if (!is_op(commander))
 	{
@@ -51,11 +51,11 @@ void Channel::set_limit(Client &commander, unsigned int limit)
 /// @brief Checks if the channel is invite only and if the client is in the invite list
 /// @param client
 /// @return true if the channel is not invite only or if the client is in the invite list
-bool Channel::invite_check(Client &client)
+bool Channel::invite_check(std::shared_ptr<Client> client)
 {
 	if (this->modes & MODE_I) // if channel is invite only
 	{
-		if (std::find(this->invite_list.begin(), this->invite_list.end(), client.get_nickname()) != this->invite_list.end())
+		if (std::find(this->invite_list.begin(), this->invite_list.end(), client->get_nickname()) != this->invite_list.end())
 			return (true); // if client is in invite list
 		return (false);	   // if client is not in invite list
 	}
@@ -118,7 +118,7 @@ void Channel::remove_mode(std::string const &mode)
 void Channel::broadcast(std::string const &message)
 {
 	std::cout << "Broadcasting: " << message << std::endl;
-	for (std::map<std::string, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	for (std::map<std::string, std::shared_ptr<Client>>::iterator it = clients.begin(); it != clients.end(); ++it)
 	{
 		std::cout << "Sending to: " << it->first << " // fd: " << it->second->get_fd() << std::endl;
 		server.send_response(message, it->second->get_fd());

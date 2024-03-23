@@ -75,7 +75,7 @@ void Server::accept_new_client()
 	socklen_t len;
 	int usr_fd;
 
-	Client usr; // create a new client
+	std::shared_ptr<Client> usr = std::make_shared<Client>(); // create a new client
 	len = sizeof(usraddr);
 	usr_fd = accept(this->server_socket, (sockaddr *)&(usraddr), &len); // accept the new client
 	if (usr_fd == -1)
@@ -88,13 +88,13 @@ void Server::accept_new_client()
 		std::cout << "fcntl() failed" << std::endl;
 		return;
 	}
-	new_poll.fd = usr_fd;						   // add the client socket to the pollfd
-	new_poll.events = POLLIN;					   // set the event to POLLIN for reading data
-	new_poll.revents = 0;						   //  set the revents to 0
-	usr.set_fd(usr_fd);							   // set the client fd
-	usr.set_IPaddr(inet_ntoa((usraddr.sin_addr))); // convert the ip address to string and set it
-	clients.push_back(usr);						   // add the client to the vector of clients
-	this->fds.push_back(new_poll);				   // add the client socket to the fd's vector
+	new_poll.fd = usr_fd;							  // add the client socket to the pollfd
+	new_poll.events = POLLIN;						  // set the event to POLLIN for reading data
+	new_poll.revents = 0;							  //  set the revents to 0
+	(*usr).set_fd(usr_fd);							  // set the client fd
+	(*usr).set_IPaddr(inet_ntoa((usraddr.sin_addr))); // convert the ip address to string and set it
+	clients.push_back(usr);							  // add the client to the vector of clients
+	this->fds.push_back(new_poll);					  // add the client socket to the fd's vector
 	std::cout << GREEN << "Client <" << usr_fd << "> Connected" << WHITE << std::endl;
 }
 
@@ -104,7 +104,7 @@ void Server::receive_new_data(int fd)
 	std::vector<std::string> cmd_vec;
 	char buff[1024];									 // buffer for the received data
 	memset(buff, 0, sizeof(buff));						 // clear the buffer
-	Client *user = get_client(fd);						 // get the client by fd
+	std::shared_ptr<Client> user = get_client(fd);		 // get the client by fd
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // receive the data
 	if (bytes <= 0)										 // check if the client disconnected
 		quit(fd);

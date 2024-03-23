@@ -18,6 +18,7 @@
 #include "Replays.hpp"
 #include "Message.hpp"
 #include "Channel.hpp"
+#include <memory>
 
 #define RED "\e[1;31m"
 #define WHITE "\e[0;37m"
@@ -40,17 +41,17 @@ private:
 	const std::string password;
 	int server_socket;
 	static bool signal;
-	std::vector<Client> clients;
+	std::vector<std::shared_ptr<Client>> clients;
 	std::vector<struct pollfd> fds;
-	std::map<std::string, Channel> channels;
-	const Client *findClient(std::string &nickname) const;
+	std::map<std::string, std::shared_ptr<Channel>> channels;
+	const std::shared_ptr<Client> findClient(std::string &nickname) const;
 
 public:
 	Server(int port, const std::string &password);
 
 	// Getters
-	Client *get_client(int fd);
-	Client *get_client(std::string nickname);
+	std::shared_ptr<Client> get_client(int fd);
+	std::shared_ptr<Client> get_client(std::string nickname);
 	std::string get_name();
 
 	// Methods
