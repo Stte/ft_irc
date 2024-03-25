@@ -79,6 +79,11 @@ public:
 	void pass(std::string pass, int fd);
 	void quit(int fd);
 	void privmsg(Message &cmd, int fd);
+	// void part(Message &cmd, int fd);
+	// void topic(Message &cmd, int fd);
+	// void kick(Message &cmd, int fd);
+	void mode(Message &cmd, int fd);
+	// void invite(Message &cmd, int fd);
 };
 
 #endif

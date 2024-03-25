@@ -32,7 +32,7 @@ public:
 	// void part(Client &client);
 	void invite(std::shared_ptr<Client> commander, std::string const &nickname);
 	void kick(std::shared_ptr<Client> commander, std::string const &nickname);
-	void mode(std::shared_ptr<Client> commander, int action, std::string const &mode);
+	void mode(std::shared_ptr<Client> commander, int action, char const &mode);
 	void op(std::shared_ptr<Client> commander, int action, std::string const &nickname);
 	void topic(std::shared_ptr<Client> commander, int action, std::string const &topic);
 	// void quit(std::string const &nickname);
@@ -61,8 +61,8 @@ private:
 	bool key_check(std::string const &key);
 	bool limit_check();
 
-	void add_mode(std::string const &mode);
-	void remove_mode(std::string const &mode);
+	void add_mode(char const &mode);
+	void remove_mode(char const &mode);
 
 	void broadcast(std::string const &message);
 	void broadcast(std::shared_ptr<Client> sender, std::string const &message);

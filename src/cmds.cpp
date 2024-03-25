@@ -166,3 +166,39 @@ void Server::privmsg(Message &cmd, int fd)
 		}
 	}
 }
+
+void Server::mode(Message &cmd, int fd)
+{
+	std::shared_ptr<Client> user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 2)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (cmd.getParams().front()[0] == '#')
+	{
+		// Channel mode
+		if (channels.find(cmd.getParams().front()) == channels.end())
+		{
+			this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+			return;
+		}
+		else
+		{
+			std::string mode = cmd.getParams()[1];
+			if (cmd.getParams()[1][0] == '+')
+				channels[cmd.getParams().front()]->mode(user, ADD, cmd.getParams()[1][1]);
+			else if (cmd.getParams()[1][0] == '-')
+				channels[cmd.getParams().front()]->mode(user, REMOVE, cmd.getParams()[1][1]);
+		}
+	}
+	else
+	{
+		// Server mode
+	}
+}

@@ -74,7 +74,7 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	remove_client(nickname);
 }
 
-void Channel::mode(std::shared_ptr<Client> commander, int action, std::string const &mode)
+void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
 {
 	if (!get_op(commander))
 	{
