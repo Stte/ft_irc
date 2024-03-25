@@ -241,23 +241,11 @@ void Channel::remove_mode(std::string const &mode)
 void Channel::broadcast(std::string const &message)
 {
 	std::cout << "Broadcasting: " << message << std::endl;
-
-	for (const auto &client : clients)
-	{
-		std::cout << "Sending to: " << client->get_nickname() << " // fd: " << client->get_fd() << std::endl;
-		server.send_response(message, client->get_fd());
-	}
+	server.send_response(rType::ChannelToClients, "P0INTL655", name, message);
 }
 
 void Channel::broadcast(std::shared_ptr<Client> sender, std::string const &message)
 {
 	std::cout << "Broadcasting: " << message << std::endl;
-
-	for (const auto &client : clients)
-	{
-		if (client == sender)
-			continue;
-		std::cout << "Sending to: " << client->get_nickname() << " // fd: " << client->get_fd() << std::endl;
-		server.send_response(message, client->get_fd());
-	}
+	server.send_response(rType::ClientToChannel, sender->get_nickname(), name, message);
 }

@@ -28,6 +28,7 @@
 
 enum rType
 {
+	ChannelToClients,
 	ClientToClient,
 	ClientToChannel,
 	ServerToClient,
@@ -64,7 +65,7 @@ public:
 	void remove_client(int fd);
 	static void handle_signal(int sig);
 	void send_response(std::string response, int fd);
-	void send_response(rType responseType, std::string recipient, std::string response);
+	void send_response(rType responseType, std::string sender, std::string recipient, std::string response);
 	std::vector<std::string> split_recived_buffer(std::string str);
 	void exec_cmd(Message &newmsg, int fd);
 	bool nickname_in_use(std::string &nickname);
