@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Channel.hpp"
 
 // Closing all the client fd's and the server socket
 void Server::close_fds()
@@ -64,38 +65,66 @@ const std::shared_ptr<Client> Server::findClient(std::string &nickname) const
 	return nullptr;
 }
 
-void Server::send_response(rType responseType, std::string recipient, std::string response)
+void Server::send_response(rType responseType, std::string sender, std::string recipient, std::string response)
 {
 	switch (responseType)
 	{
-	case rType::ClientToChannel:
-		// for (auto ch : channels)
-		// {
-		// 	if (ch.get_name() == recipient)
-		//	{
-		// 		for (auto e ; ch.clients)
-		// 		{
-		// 			if (send(e.get_fd(), response.c_str(), response.size(), 0) == -1)
-		//				std::cerr << "Response send() faild to user: " << e.get_nickname() << std::endl;
-		// 		}
-		//	}
-		//	return ;
-		//
-		// }
-		break;
-	case rType::ClientToClient:
-	case rType::ServerToClient:
-	{
-		const std::shared_ptr<Client> findRecipient = findClient(recipient);
-		if (findRecipient == nullptr)
-			return;
-		else
+		case rType::ChannelToClients:
 		{
-			if (send(findRecipient->get_fd(), response.c_str(), response.size(), 0) == -1)
-				std::cerr << "Response send() faild to user: " << findRecipient->get_nickname() << std::endl;
+			auto ch = channels[recipient];
+			if (!ch)
+				return ;
+			auto clients = ch->get_clients();
+			size_t size = clients.size();
+			for (size_t i = 0; i < size; i++)
+			{
+				if (send(clients[i]->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() failed to user: " << clients[i]->get_nickname() << std::endl;
+			}
+			return ;
+			break ;
 		}
-		return; // I am thinking here it should throw, because so the requester gets a notification that user was not found
-	}
+		case rType::ClientToChannel:
+		{
+			auto ch = channels[recipient];
+			if (!ch)
+				return ;
+			auto clients = ch->get_clients();
+			size_t size = clients.size();
+			for (size_t i = 0; i < size; i++)
+			{
+				if (clients[i]->get_nickname() == sender)
+					continue ;
+				if (send(clients[i]->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() failed to user: " << clients[i]->get_nickname() << std::endl;
+			}
+			return ;
+			break ;
+		}
+		case rType::ClientToClient:
+		case rType::ServerToClient:
+		{
+			const std::shared_ptr<Client> findRecipient = findClient(recipient);
+			if (findRecipient == nullptr)
+			{
+				const std::shared_ptr<Client> findSender = findClient(sender);
+				if (findSender == nullptr)
+				{
+					std::cerr << "Server failed to locate sender: " << sender << std::endl;
+					return ;
+				}
+				response = ERR_ERRONEUSNICK(recipient);
+				if (send(findSender->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() failed to user: " << findSender->get_nickname() << std::endl;
+				return;
+			}
+			else
+			{
+				if (send(findRecipient->get_fd(), response.c_str(), response.size(), 0) == -1)
+					std::cerr << "Response send() failed to user: " << findRecipient->get_nickname() << std::endl;
+			}
+				return;
+		}
 	}
 }
 // Get the specific client
