@@ -5,7 +5,7 @@
 
 #define CLIENT(nickname, username, IPaddr) (":" + nickname + "!~" + username + "@" + IPaddr)
 
-#define RPL_PRIVMSG(CLIENT, target, text) (CLIENT + " PRIVMSG " + target + " :" + text + CRLF)
+#define RPL_PRIVMSG(CLIENT, target, text) (CLIENT + " PRIVMSG " + target + " " + text + CRLF)
 
 // replays
 
