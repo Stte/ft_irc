@@ -44,6 +44,12 @@ public:
 
 	void set_key(std::shared_ptr<Client> commander, std::string const &key);
 	void set_limit(std::shared_ptr<Client> commander, unsigned int limit);
+	bool is_client_in_channel(std::string const &nickname);
+
+	void broadcast(std::string const &message);
+	void broadcast(std::shared_ptr<Client> sender, std::string const &message);
+
+	std::string get_channel_name();
 
 	// bool is_op(std::shared_ptr<Client> client);
 
@@ -61,11 +67,10 @@ private:
 	bool key_check(std::string const &key);
 	bool limit_check();
 
+
 	void add_mode(std::string const &mode);
 	void remove_mode(std::string const &mode);
 
-	void broadcast(std::string const &message);
-	void broadcast(std::shared_ptr<Client> sender, std::string const &message);
 
 	std::shared_ptr<Client> get_client(std::shared_ptr<Client> client);
 	std::shared_ptr<Client> get_client(std::string const &nickname);
@@ -81,5 +86,6 @@ private:
 	std::shared_ptr<Client> get_invite(std::string const &nickname);
 	void add_invite(std::shared_ptr<Client> client);
 	void remove_invite(std::string const &nickname);
+
 };
 #endif

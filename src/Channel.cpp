@@ -148,3 +148,7 @@ void Channel::message(std::shared_ptr<Client> sender, std::string const &message
 	// Broadcasts to all exlude sender
 	broadcast(sender, RPL_PRIVMSG(CLIENT(sender->get_nickname(), sender->get_username(), sender->get_IPaddr()), this->name, message));
 }
+std::string Channel::get_channel_name()
+{
+	return (this->name);
+}
