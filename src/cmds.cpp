@@ -54,6 +54,12 @@ void Server::nick(std::string nickname, int fd)
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 					this->send_response(RPL_NICKCHANGE(user->get_nickname(), nickname), fd);
 				}
+				else if (!get_clients_channel(nickname).empty())
+				{
+					std::vector<std::string> clients_channels = get_clients_channel(nickname);
+					for (auto it = clients_channels.begin(); it != clients_channels.end(); ++it)
+						this->channels[*it]->broadcast(RPL_NICKCHANGECHANNEL(old_nick, user->get_username(), user->get_IPaddr(), nickname));
+				}
 				else
 					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
 				return;
@@ -126,7 +132,6 @@ void Server::quit(int fd)
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 	this->remove_client(fd);
 	close(fd);
-	return;
 }
 
 void Server::privmsg(Message &cmd, int fd)

@@ -48,6 +48,7 @@ private:
 	std::map<std::string, std::shared_ptr<Channel>> channels;
 	const std::shared_ptr<Client> findClient(std::string &nickname) const;
 
+
 public:
 	Server(int port, const std::string &password);
 
@@ -55,6 +56,7 @@ public:
 	std::shared_ptr<Client> get_client(int fd);
 	std::shared_ptr<Client> get_client(std::string nickname);
 	std::string get_name();
+	std::vector<std::string> get_clients_channel(std::string const &nickname);
 
 	// Methods
 	void create_server_socket();
@@ -85,6 +87,7 @@ public:
 	// void part(Message &cmd, int fd);
 	// void topic(Message &cmd, int fd);
 	// void kick(Message &cmd, int fd);
+	void whois(std::string &nickname, int fd);
 };
 
 #endif

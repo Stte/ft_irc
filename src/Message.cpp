@@ -35,11 +35,10 @@ void Message::parse()
         size_t commandEnd = rawMessage.find(' ', prefixEnd);
         rawCmd = rawMessage.substr(prefixEnd, commandEnd - prefixEnd);
         command = assignCommand(rawCmd);
-        std::cout << "cmd - " << rawCmd << std::endl;
         // if (command == IRCCommand::ERROR)
         //     throw something maybe
         size_t start = commandEnd + 1;
-        
+
         while (start < rawMessage.length()) {
             // std::cout << "start is: " << start << std::endl;
             size_t end;

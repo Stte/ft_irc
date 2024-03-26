@@ -249,3 +249,10 @@ void Channel::broadcast(std::shared_ptr<Client> sender, std::string const &messa
 	std::cout << "Broadcasting: " << message << std::endl;
 	server.send_response(rType::ClientToChannel, sender->get_nickname(), name, message);
 }
+bool Channel::is_client_in_channel(std::string const &nickname)
+{
+	for (size_t i = 0; i < this->clients.size(); i++)
+		if (clients[i]->get_nickname() == nickname)
+			return (true);
+	return (false);
+}
