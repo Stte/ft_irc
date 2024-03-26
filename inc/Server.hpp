@@ -88,6 +88,7 @@ public:
 	// void part(Message &cmd, int fd);
 	// void topic(Message &cmd, int fd);
 	// void kick(Message &cmd, int fd);
+	void whois(std::string &nickname, int fd);
 };
 
 #endif

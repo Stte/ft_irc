@@ -22,7 +22,9 @@
 #define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " #" + channelname + " :" + topic + CRLF)
 #define RPL_INVITING(nickname, channelname, invited) ("341 " + nickname + " " + invited + " " + channelname + CRLF)
 #define RPL_INVITED(CLIENT, nickname, channelname) (CLIENT + " INVITE " + nickname + " " + channelname + CRLF)
-
+#define RPL_WHOISUSER(servername, nickname, username, hostname) (":" + servername + " 311 " + nickname + " " + username + " " + hostname + " * :" + nickname + CRLF)
+#define RPL_WHOISCHANNELS(servername, nickname) (":" + servername + " 311 " + nickname + " :")
+#define RPL_ENDOFWHOIS(servername, nickname) (":" + servername + " 318 " + nickname + " :End of WHOIS list." + CRLF)
 // ERRORS
 
 #define ERR_NOTENOUGHPARAM(nickname) (": 461 " + nickname + " :Not enough parameters." + CRLF)
