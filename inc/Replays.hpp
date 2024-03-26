@@ -37,7 +37,8 @@
 
 #define ERR_NOTENOUGHPARAM(nickname) (": 461 " + nickname + " :Not enough parameters." + CRLF)
 #define ERR_NOTREGISTERED(servername) (": 451 " + servername + " :Register first!" + CRLF)
-#define ERR_NICKINUSE(nickname) (": 433 " + nickname + " :Nickname is already in use" + CRLF)
+#define ERR_NICKINUSE(servername, nickname) (":" + servername + " 433 * " + nickname + " :Nickname is already in use" + CRLF)
+// :atw.hu.quakenet.org 433 * stte :Nickname is already in use.
 #define ERR_ERRONEUSNICK(nickname) (": 432 " + nickname + " :Erroneus nickname" + CRLF)
 #define ERR_ALREADYREGISTERED(nickname) (": 462 " + nickname + " :You are already registered!" + CRLF)
 #define ERR_INCORPASS(nickname) (": 464 " + nickname + " :Password incorrect! try again!" + CRLF)

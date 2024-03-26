@@ -32,7 +32,7 @@ void Server::nick(std::string nickname, int fd)
 		std::string nick_in_use = "!";
 		if (user->get_nickname().empty())
 			user->set_nickname(nick_in_use);
-		this->send_response(ERR_NICKINUSE(nickname), fd);
+		this->send_response(ERR_NICKINUSE(this->name, nickname), fd);
 		return;
 	}
 	if (!is_valid_nickname(nickname))
