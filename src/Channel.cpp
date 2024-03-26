@@ -35,6 +35,7 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 	if (get_client(client->get_nickname()) != NULL)
 	{
 		std::cerr << "Client could not join channel: client already in channel" << std::endl;
+		server.send_response(ERR_USERONCHANNEL(server.get_name(), client->get_nickname(), this->name), client->get_fd());
 		return;
 	}
 	add_client(client);
@@ -72,9 +73,11 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	if (!get_op(commander))
 	{
 		std::cerr << "Client could not kick: not an op" << std::endl;
+		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
 	remove_client(nickname);
+	// server.send_response
 }
 
 void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
@@ -82,6 +85,7 @@ void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mo
 	if (!get_op(commander))
 	{
 		std::cerr << "Client could not set mode: not an op" << std::endl;
+		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
 	if (action == ADD)
@@ -95,6 +99,7 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 	if (!get_op(commander))
 	{
 		std::cerr << "Client could not op: not an op" << std::endl;
+		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
 	if (action == ADD)
@@ -105,6 +110,7 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 			if (client == NULL)
 			{
 				std::cerr << "Client could not op: client does not exist" << std::endl;
+				server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
 				return;
 			}
 			add_op(client);
@@ -125,6 +131,7 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 		if (!get_op(commander))
 		{
 			std::cerr << "Client could not set topic: not an op" << std::endl;
+			server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 			return;
 		}
 		// set topic
@@ -134,6 +141,7 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 		if (!get_op(commander))
 		{
 			std::cerr << "Client could not remove topic: not an op" << std::endl;
+			server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 			return;
 		}
 		// remove topic
@@ -150,8 +158,4 @@ void Channel::message(std::shared_ptr<Client> sender, std::string const &message
 	}
 	// Broadcasts to all exlude sender
 	broadcast(sender, RPL_PRIVMSG(CLIENT(sender->get_nickname(), sender->get_username(), sender->get_IPaddr()), this->name, message));
-}
-std::string Channel::get_channel_name()
-{
-	return (this->name);
 }

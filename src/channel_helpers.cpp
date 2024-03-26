@@ -256,3 +256,8 @@ bool Channel::is_client_in_channel(std::string const &nickname)
 			return (true);
 	return (false);
 }
+
+std::string Channel::get_channel_name()
+{
+	return (this->name);
+}
