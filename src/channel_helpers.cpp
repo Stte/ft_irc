@@ -214,25 +214,25 @@ bool Channel::limit_check()
 
 /// MODES ///
 
-void Channel::add_mode(std::string const &mode)
+void Channel::add_mode(char const &mode)
 {
-	if (mode == "i")
+	if (mode == 'i')
 		this->modes |= MODE_I;
-	else if (mode == "k")
+	else if (mode == 'k')
 		this->modes |= MODE_K;
-	else if (mode == "l")
+	else if (mode == 'l')
 		this->modes |= MODE_L;
 	else
 		std::cerr << "Unknown mode" << std::endl;
 }
 
-void Channel::remove_mode(std::string const &mode)
+void Channel::remove_mode(char const &mode)
 {
-	if (mode == "i")
+	if (mode == 'i')
 		this->modes &= ~MODE_I;
-	else if (mode == "k")
+	else if (mode == 'k')
 		this->modes &= ~MODE_K;
-	else if (mode == "l")
+	else if (mode == 'l')
 		this->modes &= ~MODE_L;
 	else
 		std::cerr << "Unknown mode" << std::endl;

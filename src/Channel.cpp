@@ -17,16 +17,19 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 	if (!invite_check(client))
 	{
 		std::cerr << "Client could not join channel: invite only" << std::endl;
+		server.send_response(ERR_INVITEONLYCHAN(server.hostname, client->get_nickname(), this->name), client->get_fd());
 		return;
 	}
 	if (!key_check(key))
 	{
 		std::cerr << "Client could not join channel: wrong key" << std::endl;
+		server.send_response(ERR_BADCHANNELKEY(this->name), client->get_fd());
 		return;
 	}
 	if (!limit_check())
 	{
 		std::cerr << "Client could not join channel: channel is full" << std::endl;
+		server.send_response(ERR_CHANNELISFULL(this->name), client->get_fd());
 		return;
 	}
 	if (get_client(client->get_nickname()) != NULL)
@@ -43,25 +46,26 @@ void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickn
 	if (!get_op(commander))
 	{
 		std::cerr << "Client could not invite: not an op" << std::endl;
+		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
-	if (server.get_client(nickname) == NULL)
+	std::shared_ptr<Client> client = server.get_client(nickname);
+	if (client == NULL)
 	{
 		std::cerr << "Client could not invite: client does not exist" << std::endl;
+		server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
 		return;
 	}
-
-	if (get_invite(nickname) == NULL)
+	if (get_invite(nickname) != NULL)
 	{
-		std::shared_ptr<Client> client = server.get_client(nickname);
-		if (client == NULL)
-		{
-			std::cerr << "Client could not invite: client does not exist" << std::endl;
-			return;
-		}
-		add_invite(client);
+		std::cerr << "Client could not invite: client already invited" << std::endl;
+		// server.send_response(ERR_USERONCHANNEL(commander->get_nickname(), nickname, this->name), commander->get_fd());
+		server.send_response(ERR_USERONCHANNEL(server.hostname, nickname, this->name), commander->get_fd());
+		return;
 	}
-	// send message to client that he has been invited
+	add_invite(client);
+	server.send_response(RPL_INVITING(commander->get_nickname(), client->get_nickname(), this->name), commander->get_fd());
+	server.send_response(RPL_INVITED(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), client->get_nickname(), this->name), client->get_fd());
 }
 
 void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname)
@@ -74,7 +78,7 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	remove_client(nickname);
 }
 
-void Channel::mode(std::shared_ptr<Client> commander, int action, std::string const &mode)
+void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
 {
 	if (!get_op(commander))
 	{

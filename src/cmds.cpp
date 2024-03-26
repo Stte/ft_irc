@@ -161,7 +161,7 @@ void Server::privmsg(Message &cmd, int fd)
 	{
 		if (get_client(cmd.getParams().front()) == NULL)
 		{
-			this->send_response(ERR_NOSUCHNICK(user->get_nickname(), cmd.getParams().front()), fd);
+			this->send_response(ERR_NOSUCHNICK(user->get_nickname()), fd);
 			return;
 		}
 		else
@@ -170,4 +170,63 @@ void Server::privmsg(Message &cmd, int fd)
 			this->send_response(RPL_PRIVMSG(CLIENT(user->get_nickname(), user->get_username(), user->get_IPaddr()), recipient->get_nickname(), cmd.getParams()[1]), recipient->get_fd());
 		}
 	}
+}
+
+void Server::mode(Message &cmd, int fd)
+{
+	std::shared_ptr<Client> user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 2)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (cmd.getParams().front()[0] == '#')
+	{
+		// Channel mode
+		if (channels.find(cmd.getParams().front()) == channels.end())
+		{
+			this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+			return;
+		}
+		else
+		{
+			std::string mode = cmd.getParams()[1];
+			if (cmd.getParams()[1][0] == '+')
+				channels[cmd.getParams().front()]->mode(user, ADD, cmd.getParams()[1][1]);
+			else if (cmd.getParams()[1][0] == '-')
+				channels[cmd.getParams().front()]->mode(user, REMOVE, cmd.getParams()[1][1]);
+		}
+	}
+	else
+	{
+		// Server mode
+	}
+}
+
+void Server::invite(Message &cmd, int fd)
+{
+	std::shared_ptr<Client> user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 2)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (channels.find(cmd.getParams()[1]) == channels.end())
+	{
+		this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+		return;
+	}
+	channels[cmd.getParams()[1]]->invite(user, cmd.getParams()[0]);
+	// this->send_response(RPL_INVITING(user->get_nickname(), recipient->get_nickname(), cmd.getParams()[1]), user->get_fd());
+	// this->send_response(RPL_INVITED(CLIENT(user->get_nickname(), user->get_username(), user->get_IPaddr()), recipient->get_nickname(), cmd.getParams()[1]), recipient->get_fd());
 }
