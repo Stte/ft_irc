@@ -227,6 +227,17 @@ void Server::invite(Message &cmd, int fd)
 		return;
 	}
 	channels[cmd.getParams()[1]]->invite(user, cmd.getParams()[0]);
-	// this->send_response(RPL_INVITING(user->get_nickname(), recipient->get_nickname(), cmd.getParams()[1]), user->get_fd());
-	// this->send_response(RPL_INVITED(CLIENT(user->get_nickname(), user->get_username(), user->get_IPaddr()), recipient->get_nickname(), cmd.getParams()[1]), recipient->get_fd());
+}
+
+void Server::whois(std::string &nick, int fd)
+{
+	std::shared_ptr<Client> user = findClient(nick);
+	if (user == nullptr)
+	{
+		this->send_response(ERR_NOSUCHNICK(nick), fd);
+		this->send_response(RPL_ENDOFWHOIS(this->get_name(), nick), fd);
+		return ;
+	}
+	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_IPaddr()), fd);
+	this->send_response(RPL_ENDOFWHOIS(this->get_name(), user->get_nickname()), fd);
 }

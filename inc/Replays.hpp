@@ -23,7 +23,6 @@
 #define RPL_INVITING(nickname, channelname, invited) ("341 " + nickname + " " + invited + " " + channelname + CRLF)
 #define RPL_INVITED(CLIENT, nickname, channelname) (CLIENT + " INVITE " + nickname + " " + channelname + CRLF)
 #define RPL_WHOISUSER(servername, nickname, username, hostname) (":" + servername + " 311 " + nickname + " " + username + " " + hostname + " * :" + nickname + CRLF)
-#define RPL_WHOISCHANNELS(servername, nickname) (":" + servername + " 311 " + nickname + " :")
 #define RPL_ENDOFWHOIS(servername, nickname) (":" + servername + " 318 " + nickname + " :End of WHOIS list." + CRLF)
 // ERRORS
 
@@ -39,7 +38,6 @@
 #define ERR_UNKNOWNMODE(nickname, channelname, mode) (": 472 " + nickname + " #" + channelname + " " + mode + " :is not a recognised channel mode" + CRLF)
 #define ERR_CHANNELNOTFOUND(nickname, channelname) (": 403 " + nickname + " " + channelname + " :No such channel" + CRLF)
 #define ERR_NOTOPERATOR(channelname) (": 482 #" + channelname + " :You're not a channel operator" + CRLF)
-// #define ERR_NOSUCHNICK(channelname, name) (": 401 #" + channelname + " " + name + " :No such nick/channel" + CRLF)
 #define ERR_NOSUCHCHANNEL(channel) ("403 * " + channel + " :No such channel" + CRLF)
 #define ERR_CMDNOTFOUND(nickname, command) (": 421 " + nickname + " " + command + " :Unknown command" + CRLF)
 #define ERR_NOTONCHANNEL(channel) ("442 " + channel + " :You're not on that channel" + CRLF)
