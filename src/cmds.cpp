@@ -58,7 +58,7 @@ void Server::nick(std::string nickname, int fd)
 				{
 					std::vector<std::string> clients_channels = get_clients_channel(nickname);
 					for (auto it = clients_channels.begin(); it != clients_channels.end(); ++it)
-						this->channels[*it]->broadcast(RPL_PRIVMSG(CLIENT(old_nick, user->get_username(), user->get_IPaddr()), channels[*it]->get_channel_name(), old_nick + " is now knows as " + nickname));
+						this->channels[*it]->broadcast(RPL_NICKCHANGECHANNEL(old_nick, user->get_username(), user->get_IPaddr(), nickname));
 				}
 				else
 					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);

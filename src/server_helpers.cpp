@@ -171,10 +171,7 @@ std::vector<std::string> Server::get_clients_channel(std::string const &nickname
 {
 	std::vector<std::string> clients_channels;
 	for (auto it = this->channels.begin(); it != this->channels.end(); ++it)
-	{
-		std::cout << it->first << std::endl;
 		if (it->second->is_client_in_channel(nickname) == true)
 			clients_channels.push_back(it->first);
-	}
 	return clients_channels;
 }
