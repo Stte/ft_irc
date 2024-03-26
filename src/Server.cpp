@@ -154,7 +154,9 @@ void Server::exec_cmd(Message &newmsg, int fd)
 	case IRCCommand::MODE:
 		mode(newmsg, fd);
 		break;
-
+	case IRCCommand::INVITE:
+		invite(newmsg, fd);
+		break;
 	default:
 		this->send_response(ERR_CMDNOTFOUND(std::string("*"), newmsg.getRawCmd()), fd);
 		break;
