@@ -4,7 +4,7 @@ Channel::Channel() : name(""), server(*(new Server(0, ""))), modes(0), limit(0)
 {
 }
 
-Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), modes(0), limit(0)
+Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), modes(0), limit(0), topic_str("")
 {
 	// do name check?
 	// check that server is valid
@@ -134,7 +134,6 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 			server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 			return;
 		}
-		// set topic
 	}
 	else if (action == REMOVE)
 	{

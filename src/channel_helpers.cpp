@@ -147,6 +147,11 @@ unsigned char Channel::get_modes()
 	return (this->modes);
 }
 
+std::string Channel::get_topic() const
+{
+	return (this->topic_str);
+}
+
 /// SETTERS ///
 
 void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
@@ -157,6 +162,11 @@ void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
 		return;
 	}
 	this->key = key;
+}
+
+void Channel::set_topic(std::string topic)
+{
+	this->topic_str = topic;
 }
 
 void Channel::set_limit(std::shared_ptr<Client> commander, unsigned int limit)
