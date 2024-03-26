@@ -268,6 +268,37 @@ void Server::topic(Message &cmd, int fd)
 	}
 }
 
+void Server::kick(Message &cmd, int fd)
+{
+	std::shared_ptr<Client> user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 2)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (channels.find(cmd.getParams().front()) == channels.end())
+	{
+		this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+		return;
+	}
+	// print params
+	std::cout << "Params:" << std::endl;
+	for (auto &param : cmd.getParams())
+	{
+		std::cout << param << std::endl;
+	}
+
+	if (cmd.getParams().size() > 2)
+		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
+	else
+		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1]);
+}
+
 void Server::whois(std::string &nick, int fd)
 {
 	std::shared_ptr<Client> user = findClient(nick);

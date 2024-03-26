@@ -84,8 +84,8 @@ public:
 	void mode(Message &cmd, int fd);
 	void invite(Message &cmd, int fd);
 	void topic(Message &cmd, int fd);
+	void kick(Message &cmd, int fd);
 	// void part(Message &cmd, int fd);
-	// void kick(Message &cmd, int fd);
 	void whois(std::string &nickname, int fd);
 };
 

@@ -76,8 +76,31 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
+	if (get_client(nickname) == NULL)
+	{
+		server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
+		return;
+	}
 	remove_client(nickname);
-	// server.send_response
+	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""));
+	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""), server.get_client(nickname)->get_fd());
+}
+
+void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname, std::string const &msg)
+{
+	if (!get_op(commander))
+	{
+		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
+		return;
+	}
+	if (get_client(nickname) == NULL)
+	{
+		server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
+		return;
+	}
+	remove_client(nickname);
+	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg));
+	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg), server.get_client(nickname)->get_fd());
 }
 
 void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
@@ -116,6 +139,11 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 	}
 	else if (action == REMOVE)
 	{
+		if (server.get_client(nickname) == NULL)
+		{
+			server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
+			return;
+		}
 		remove_op(nickname);
 		broadcast(RPL_YOURENOTOPER(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname));
 	}

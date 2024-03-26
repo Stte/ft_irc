@@ -31,6 +31,7 @@
 #define RPL_TOPIC(CLIENT, channelname, topic) (CLIENT + " TOPIC " + channelname + " " + topic + CRLF)
 #define RPL_YOUREOPER(CLIENT, channel, nickname) (CLIENT + " MODE " + channel + " +o " + nickname + CRLF)
 #define RPL_YOURENOTOPER(CLIENT, channel, nickname) (CLIENT + " MODE " + channel + " -o " + nickname + CRLF)
+#define RPL_KICK(CLIENT, channel, nickname, msg) (CLIENT + " KICK " + channel + " " + nickname + " " + msg + CRLF)
 
 // ERRORS
 

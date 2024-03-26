@@ -32,6 +32,7 @@ public:
 	// void part(Client &client);
 	void invite(std::shared_ptr<Client> commander, std::string const &nickname);
 	void kick(std::shared_ptr<Client> commander, std::string const &nickname);
+	void kick(std::shared_ptr<Client> commander, std::string const &nickname, std::string const &msg);
 	void mode(std::shared_ptr<Client> commander, int action, char const &mode);
 	void op(std::shared_ptr<Client> commander, int action, std::string const &nickname);
 	void topic(std::shared_ptr<Client> commander);

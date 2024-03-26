@@ -46,7 +46,6 @@ void Channel::remove_client(std::string const &nickname)
 		return;
 	}
 	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
-	// send message to client that he has been kicked
 }
 
 /// OPS ///
