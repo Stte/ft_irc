@@ -34,6 +34,7 @@ public:
 	void kick(std::shared_ptr<Client> commander, std::string const &nickname);
 	void mode(std::shared_ptr<Client> commander, int action, char const &mode);
 	void op(std::shared_ptr<Client> commander, int action, std::string const &nickname);
+	void topic(std::shared_ptr<Client> commander);
 	void topic(std::shared_ptr<Client> commander, int action, std::string const &topic);
 	// void quit(std::string const &nickname);
 	void message(std::shared_ptr<Client> sender, std::string const &message);
@@ -48,7 +49,7 @@ public:
 
 	void set_key(std::shared_ptr<Client> commander, std::string const &key);
 	void set_limit(std::shared_ptr<Client> commander, unsigned int limit);
-	void set_topic(std::string);
+	void set_topic(std::string topic);
 
 	bool is_client_in_channel(std::string const &nickname);
 	std::string get_channel_name();

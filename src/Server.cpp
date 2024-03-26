@@ -157,6 +157,9 @@ void Server::exec_cmd(Message &newmsg, int fd)
 	case IRCCommand::INVITE:
 		invite(newmsg, fd);
 		break;
+	case IRCCommand::TOPIC:
+		topic(newmsg, fd);
+		break;
 	case IRCCommand::WHOIS:
 		whois(*newmsg.getParams().begin(), fd);
 		break;

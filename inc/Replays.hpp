@@ -9,21 +9,29 @@
 
 // replays
 
-#define RPL_NICKCHANGECHANNEL(oldnickname, username, hostname, nickname)(":" + oldnickname + "!~" + username + "@" + hostname + " NICK :" + nickname + CRLF)
+#define RPL_NICKCHANGECHANNEL(oldnickname, username, hostname, nickname) (":" + oldnickname + "!~" + username + "@" + hostname + " NICK :" + nickname + CRLF)
 #define RPL_CONNECTED(nickname) (": 001 " + nickname + " : Welcome to the IRC server!" + CRLF)
 #define RPL_NICKCHANGE(oldnickname, nickname) (":" + oldnickname + " NICK " + nickname + CRLF)
-#define RPL_UMODEIS(hostname, channelname, mode, user) (":" + hostname + " MODE " + channelname + " " + mode + " " + user + CRLF)
+
+// #define RPL_UMODEIS(hostname, channelname, mode, user) (":" + hostname + " MODE " + channelname + " " + mode + " " + user + CRLF)
+#define RPL_UMODEIS(NICK, modes) (NICK + " " + modes + CRLF)
+
 #define RPL_CREATIONTIME(nickname, channelname, creationtime) (": 329 " + nickname + " #" + channelname + " " + creationtime + CRLF)
 #define RPL_CHANNELMODES(nickname, channelname, modes) (": 324 " + nickname + " #" + channelname + " " + modes + CRLF)
 #define RPL_CHANGEMODE(hostname, channelname, mode, arguments) (":" + hostname + " MODE #" + channelname + " " + mode + " " + arguments + CRLF)
 #define RPL_JOINMSG(hostname, ipaddress, channelname) (":" + hostname + "@" + ipaddress + " JOIN #" + channelname + CRLF)
 #define RPL_NAMREPLY(nickname, channelname, clientslist) (": 353 " + nickname + " @ #" + channelname + " :" + clientslist + CRLF)
 #define RPL_ENDOFNAMES(nickname, channelname) (": 366 " + nickname + " #" + channelname + " :END of /NAMES list" + CRLF)
-#define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " #" + channelname + " :" + topic + CRLF)
+#define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " " + channelname + " :" + topic + CRLF)
 #define RPL_INVITING(nickname, channelname, invited) ("341 " + nickname + " " + invited + " " + channelname + CRLF)
 #define RPL_INVITED(CLIENT, nickname, channelname) (CLIENT + " INVITE " + nickname + " " + channelname + CRLF)
 #define RPL_WHOISUSER(servername, nickname, username, hostname) (":" + servername + " 311 " + nickname + " " + username + " " + hostname + " * :" + nickname + CRLF)
 #define RPL_ENDOFWHOIS(servername, nickname) (":" + servername + " 318 " + nickname + " :End of WHOIS list." + CRLF)
+#define RPL_NOTOPIC(CLIENT, channelname) (CLIENT + " TOPIC " + channelname + " :" + CRLF)
+#define RPL_TOPIC(CLIENT, channelname, topic) (CLIENT + " TOPIC " + channelname + " " + topic + CRLF)
+#define RPL_YOUREOPER(CLIENT, channel, nickname) (CLIENT + " MODE " + channel + " +o " + nickname + CRLF)
+#define RPL_YOURENOTOPER(CLIENT, channel, nickname) (CLIENT + " MODE " + channel + " -o " + nickname + CRLF)
+
 // ERRORS
 
 #define ERR_NOTENOUGHPARAM(nickname) (": 461 " + nickname + " :Not enough parameters." + CRLF)

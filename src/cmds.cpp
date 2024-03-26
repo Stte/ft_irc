@@ -197,9 +197,19 @@ void Server::mode(Message &cmd, int fd)
 		{
 			std::string mode = cmd.getParams()[1];
 			if (cmd.getParams()[1][0] == '+')
-				channels[cmd.getParams().front()]->mode(user, ADD, cmd.getParams()[1][1]);
+			{
+				if (cmd.getParams()[1][1] == 'o')
+					channels[cmd.getParams().front()]->op(user, ADD, cmd.getParams()[2]);
+				else
+					channels[cmd.getParams().front()]->mode(user, ADD, cmd.getParams()[1][1]);
+			}
 			else if (cmd.getParams()[1][0] == '-')
-				channels[cmd.getParams().front()]->mode(user, REMOVE, cmd.getParams()[1][1]);
+			{
+				if (cmd.getParams()[1][1] == 'o')
+					channels[cmd.getParams().front()]->op(user, REMOVE, cmd.getParams()[2]);
+				else
+					channels[cmd.getParams().front()]->mode(user, REMOVE, cmd.getParams()[1][1]);
+			}
 		}
 	}
 	else
@@ -229,6 +239,35 @@ void Server::invite(Message &cmd, int fd)
 	channels[cmd.getParams()[1]]->invite(user, cmd.getParams()[0]);
 }
 
+void Server::topic(Message &cmd, int fd)
+{
+	std::shared_ptr<Client> user = get_client(fd);
+	if (!user->is_registered())
+	{
+		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
+		return;
+	}
+	if (cmd.getParams().size() < 1)
+	{
+		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return;
+	}
+	if (channels.find(cmd.getParams().front()) == channels.end())
+	{
+		this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
+		return;
+	}
+	if (cmd.getParams().size() == 1)
+		channels[cmd.getParams().front()]->topic(user);
+	else
+	{
+		if (cmd.getParams()[1].size() == 1)
+			channels[cmd.getParams().front()]->topic(user, REMOVE, cmd.getParams()[1]);
+		else
+			channels[cmd.getParams().front()]->topic(user, ADD, cmd.getParams()[1]);
+	}
+}
+
 void Server::whois(std::string &nick, int fd)
 {
 	std::shared_ptr<Client> user = findClient(nick);
@@ -236,7 +275,7 @@ void Server::whois(std::string &nick, int fd)
 	{
 		this->send_response(ERR_NOSUCHNICK(nick), fd);
 		this->send_response(RPL_ENDOFWHOIS(this->get_name(), nick), fd);
-		return ;
+		return;
 	}
 	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_IPaddr()), fd);
 	this->send_response(RPL_ENDOFWHOIS(this->get_name(), user->get_nickname()), fd);

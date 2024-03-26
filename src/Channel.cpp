@@ -1,10 +1,10 @@
 #include "Channel.hpp"
 
-Channel::Channel() : name(""), server(*(new Server(0, ""))), modes(0), limit(0)
+Channel::Channel() : name(""), server(*(new Server(0, ""))), topic_str(""), modes(0), limit(0)
 {
 }
 
-Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), modes(0), limit(0), topic_str("")
+Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), topic_str(""), modes(0), limit(0)
 {
 	// do name check?
 	// check that server is valid
@@ -40,6 +40,7 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 	}
 	add_client(client);
 	broadcast(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()) + " JOIN " + this->name + CRLF);
+	this->topic(client);
 }
 
 void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickname)
@@ -72,7 +73,6 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 {
 	if (!get_op(commander))
 	{
-		std::cerr << "Client could not kick: not an op" << std::endl;
 		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
@@ -84,7 +84,6 @@ void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mo
 {
 	if (!get_op(commander))
 	{
-		std::cerr << "Client could not set mode: not an op" << std::endl;
 		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
@@ -98,7 +97,6 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 {
 	if (!get_op(commander))
 	{
-		std::cerr << "Client could not op: not an op" << std::endl;
 		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
@@ -109,31 +107,50 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 			std::shared_ptr<Client> client = server.get_client(nickname);
 			if (client == NULL)
 			{
-				std::cerr << "Client could not op: client does not exist" << std::endl;
 				server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
 				return;
 			}
 			add_op(client);
+			broadcast(RPL_YOUREOPER(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname));
 		}
 	}
 	else if (action == REMOVE)
 	{
 		remove_op(nickname);
+		broadcast(RPL_YOURENOTOPER(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname));
 	}
-	// todo: messages?
+}
+
+void Channel::topic(std::shared_ptr<Client> commander)
+{
+	if (this->get_client(commander) == NULL)
+	{
+		server.send_response(ERR_NOTONCHANNEL(this->name), commander->get_fd());
+		return;
+	}
+	if (this->get_topic().empty())
+		server.send_response(RPL_NOTOPIC(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->get_channel_name()), commander->get_fd());
+	else
+		server.send_response(RPL_TOPIC(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->get_channel_name(), this->get_topic()), commander->get_fd());
 }
 
 void Channel::topic(std::shared_ptr<Client> commander, int action, std::string const &topic)
 {
-	(void)topic;
 	if (action == ADD)
 	{
+		if (get_client(commander) == NULL)
+		{
+			server.send_response(ERR_NOTONCHANNEL(this->name), commander->get_fd());
+			return;
+		}
 		if (!get_op(commander))
 		{
 			std::cerr << "Client could not set topic: not an op" << std::endl;
 			server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 			return;
 		}
+		set_topic(topic);
+		this->broadcast(RPL_TOPIC(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, this->get_topic()));
 	}
 	else if (action == REMOVE)
 	{
@@ -143,9 +160,9 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 			server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 			return;
 		}
-		// remove topic
+		set_topic("");
+		this->broadcast(RPL_NOTOPIC(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name));
 	}
-	// view topic
 }
 
 void Channel::message(std::shared_ptr<Client> sender, std::string const &message)

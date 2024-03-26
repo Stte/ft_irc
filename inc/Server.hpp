@@ -48,7 +48,6 @@ private:
 	std::map<std::string, std::shared_ptr<Channel>> channels;
 	const std::shared_ptr<Client> findClient(std::string &nickname) const;
 
-
 public:
 	Server(int port, const std::string &password);
 
@@ -84,8 +83,8 @@ public:
 	void privmsg(Message &cmd, int fd);
 	void mode(Message &cmd, int fd);
 	void invite(Message &cmd, int fd);
+	void topic(Message &cmd, int fd);
 	// void part(Message &cmd, int fd);
-	// void topic(Message &cmd, int fd);
 	// void kick(Message &cmd, int fd);
 	void whois(std::string &nickname, int fd);
 };
