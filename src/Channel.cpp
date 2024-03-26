@@ -17,7 +17,7 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 	if (!invite_check(client))
 	{
 		std::cerr << "Client could not join channel: invite only" << std::endl;
-		server.send_response(ERR_INVITEONLYCHAN(server.hostname, client->get_nickname(), this->name), client->get_fd());
+		server.send_response(ERR_INVITEONLYCHAN(server.get_name(), client->get_nickname(), this->name), client->get_fd());
 		return;
 	}
 	if (!key_check(key))
@@ -59,8 +59,7 @@ void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickn
 	if (get_invite(nickname) != NULL)
 	{
 		std::cerr << "Client could not invite: client already invited" << std::endl;
-		// server.send_response(ERR_USERONCHANNEL(commander->get_nickname(), nickname, this->name), commander->get_fd());
-		server.send_response(ERR_USERONCHANNEL(server.hostname, nickname, this->name), commander->get_fd());
+		server.send_response(ERR_USERONCHANNEL(server.get_name(), nickname, this->name), commander->get_fd());
 		return;
 	}
 	add_invite(client);

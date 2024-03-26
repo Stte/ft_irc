@@ -4,7 +4,7 @@
 bool Server::signal = false;
 
 Server::Server(int port, const std::string &password)
-	: port(port), name("IRC SERVER"), password(password)
+	: port(port), name("LOL"), password(password)
 {
 	this->server_socket = -1;
 }

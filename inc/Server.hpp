@@ -49,7 +49,6 @@ private:
 	const std::shared_ptr<Client> findClient(std::string &nickname) const;
 
 public:
-	std::string hostname = "localhost"; // todo: change to actual hostname
 	Server(int port, const std::string &password);
 
 	// Getters
