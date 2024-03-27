@@ -85,7 +85,11 @@ void Server::username(std::vector<std::string> username, int fd)
 		return;
 	}
 	else
+	{
 		user->set_username(username[0]);
+		user->set_hostname(username[2]);
+		user->set_realname(username[3]);
+	}
 	if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }
@@ -309,6 +313,6 @@ void Server::whois(std::string &nick, int fd)
 		this->send_response(RPL_ENDOFWHOIS(this->get_name(), nick), fd);
 		return;
 	}
-	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_IPaddr()), fd);
+	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_hostname(), user->get_realname()), fd);
 	this->send_response(RPL_ENDOFWHOIS(this->get_name(), user->get_nickname()), fd);
 }

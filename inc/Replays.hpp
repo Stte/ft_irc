@@ -25,7 +25,7 @@
 #define RPL_TOPICIS(nickname, channelname, topic) (": 332 " + nickname + " " + channelname + " :" + topic + CRLF)
 #define RPL_INVITING(nickname, channelname, invited) ("341 " + nickname + " " + invited + " " + channelname + CRLF)
 #define RPL_INVITED(CLIENT, nickname, channelname) (CLIENT + " INVITE " + nickname + " " + channelname + CRLF)
-#define RPL_WHOISUSER(servername, nickname, username, hostname) (":" + servername + " 311 " + nickname + " " + username + " " + hostname + " * :" + nickname + CRLF)
+#define RPL_WHOISUSER(servername, nickname, username, hostname, realname) (":" + servername + " 311 " + nickname + " " + username + " " + hostname + " * " + realname + CRLF)
 #define RPL_ENDOFWHOIS(servername, nickname) (":" + servername + " 318 " + nickname + " :End of WHOIS list." + CRLF)
 #define RPL_NOTOPIC(CLIENT, channelname) (CLIENT + " TOPIC " + channelname + " :" + CRLF)
 #define RPL_TOPIC(CLIENT, channelname, topic) (CLIENT + " TOPIC " + channelname + " " + topic + CRLF)
