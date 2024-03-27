@@ -45,15 +45,12 @@ void Server::nick(std::string nickname, int fd)
 	{
 		if (user && user->is_registered())
 		{
-			std::cout << "Entered1" << std::endl;
 			std::string old_nick = user->get_nickname();
 			user->set_nickname(nickname);
 			if (!old_nick.empty() && old_nick != nickname)
 			{
-				std::cout << "Entered2" << std::endl;
 				if (old_nick == nick_in_use && !user->get_username().empty())
 				{
-					std::cout << "Entered3" << std::endl;
 					user->set_registered(true);
 					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
@@ -61,18 +58,13 @@ void Server::nick(std::string nickname, int fd)
 				}
 				else if (!get_clients_channel(nickname).empty())
 				{
-					std::cout << "Entered4" << std::endl;
 					std::vector<std::string> clients_channels = get_clients_channel(nickname);
 					for (auto it = clients_channels.begin(); it != clients_channels.end(); ++it)
 						this->channels[*it]->broadcast(RPL_NICKCHANGECHANNEL(old_nick, user->get_username(), user->get_IPaddr(), nickname));
 					return ;
 				}
 				else
-				{
-					std::cout << "Entered5" << std::endl;
 					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
-				}
-
 			}
 			if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
 			{
