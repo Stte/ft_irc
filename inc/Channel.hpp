@@ -37,7 +37,8 @@ public:
 	void op(std::shared_ptr<Client> commander, int action, std::string const &nickname);
 	void topic(std::shared_ptr<Client> commander);
 	void topic(std::shared_ptr<Client> commander, int action, std::string const &topic);
-	// void quit(std::string const &nickname);
+	void quit(std::shared_ptr<Client> commander);
+	void quit(std::shared_ptr<Client> commander, std::string const &msg);
 	void message(std::shared_ptr<Client> sender, std::string const &message);
 
 	void broadcast(std::string const &message);
@@ -79,6 +80,7 @@ private:
 	std::shared_ptr<Client> get_client(std::string const &nickname);
 	void add_client(std::shared_ptr<Client> client);
 	void remove_client(std::string const &nickname);
+	void remove_client(std::shared_ptr<Client> client);
 
 	std::shared_ptr<Client> get_op(std::shared_ptr<Client> client);
 	std::shared_ptr<Client> get_op(std::string const &nickname);

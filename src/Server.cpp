@@ -146,7 +146,7 @@ void Server::exec_cmd(Message &newmsg, int fd)
 		pass(*newmsg.getParams().begin(), fd);
 		break;
 	case IRCCommand::QUIT:
-		quit(fd);
+		quit(newmsg, fd);
 		break;
 	case IRCCommand::PRIVMSG:
 		privmsg(newmsg, fd);

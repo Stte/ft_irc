@@ -119,17 +119,35 @@ void Server::join(Message &cmd, int fd)
 			channels[cmd.getParams().front()]->join(user, cmd.getParams()[1]);
 		else
 			channels[cmd.getParams().front()]->join(user, NO_KEY);
-		// print all users in the channel
-		// for (auto &client : channels[cmd.getParams().front()].get_clients())
-		// {
-		// 	std::cout << client.first << std::endl;
-		// }
 	}
 }
 
 void Server::quit(int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
+	std::shared_ptr<Client> client = get_client(fd);
+	// loop client channels
+	for (auto &channel : client->get_channels())
+	{
+		channel->quit(client);
+	}
+	this->remove_client(fd);
+	close(fd);
+}
+
+void Server::quit(Message &cmd, int fd)
+{
+	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
+	std::shared_ptr<Client> client = get_client(fd);
+	if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
+	{
+		std::string msg(cmd.getParams().front());
+		// loop client channels
+		for (auto &channel : client->get_channels())
+		{
+			channel->quit(client, msg);
+		}
+	}
 	this->remove_client(fd);
 	close(fd);
 }

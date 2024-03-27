@@ -78,3 +78,18 @@ void Client::set_registered(bool value)
 {
 	this->registered = value;
 }
+
+std::vector<std::shared_ptr<Channel>> Client::get_channels() const
+{
+	return (this->channels);
+}
+
+void Client::add_channel(std::shared_ptr<Channel> channel)
+{
+	this->channels.push_back(channel);
+}
+
+void Client::remove_channel(std::shared_ptr<Channel> channel)
+{
+	this->channels.erase(std::remove(this->channels.begin(), this->channels.end(), channel), this->channels.end());
+}

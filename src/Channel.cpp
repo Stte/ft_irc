@@ -193,6 +193,27 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 	}
 }
 
+void Channel::quit(std::shared_ptr<Client> client)
+{
+	if (get_client(client) == NULL)
+	{
+		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
+		return;
+	}
+	remove_client(client);
+	broadcast(RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), ""));
+}
+void Channel::quit(std::shared_ptr<Client> client, std::string const &msg)
+{
+	if (get_client(client) == NULL)
+	{
+		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
+		return;
+	}
+	remove_client(client);
+	broadcast(RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), msg));
+}
+
 void Channel::message(std::shared_ptr<Client> sender, std::string const &message)
 {
 	if (get_client(sender) == NULL)

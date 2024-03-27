@@ -47,6 +47,15 @@ void Channel::remove_client(std::string const &nickname)
 	}
 	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
 }
+void Channel::remove_client(std::shared_ptr<Client> client)
+{
+	if (!get_client(client))
+	{
+		std::cerr << "Client not in channel" << std::endl;
+		return;
+	}
+	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
+}
 
 /// OPS ///
 

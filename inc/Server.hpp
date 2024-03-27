@@ -80,6 +80,7 @@ public:
 	void join(Message &cmd, int fd);
 	void pass(std::string pass, int fd);
 	void quit(int fd);
+	void quit(Message &cmd, int fd);
 	void privmsg(Message &cmd, int fd);
 	void mode(Message &cmd, int fd);
 	void invite(Message &cmd, int fd);
