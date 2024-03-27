@@ -21,6 +21,7 @@ enum ModeAction
 	VIEW
 };
 
+class Client;
 class Server;
 class Channel
 {
@@ -57,6 +58,7 @@ public:
 	std::string get_channel_name();
 
 	// bool is_op(std::shared_ptr<Client> client);
+	bool is_empty();
 
 private:
 	std::string name;
@@ -86,10 +88,12 @@ private:
 	std::shared_ptr<Client> get_op(std::string const &nickname);
 	void add_op(std::shared_ptr<Client> client);
 	void remove_op(std::string const &nickname);
+	void remove_op(std::shared_ptr<Client> client);
 
 	std::shared_ptr<Client> get_invite(std::shared_ptr<Client> client);
 	std::shared_ptr<Client> get_invite(std::string const &nickname);
 	void add_invite(std::shared_ptr<Client> client);
 	void remove_invite(std::string const &nickname);
+	void remove_invite(std::shared_ptr<Client> client);
 };
 #endif

@@ -34,6 +34,7 @@ enum rType
 	ServerToClient,
 };
 
+class Client;
 class Channel;
 class Server
 {
@@ -64,6 +65,7 @@ public:
 	void accept_new_client();
 	void receive_new_data(int fd);
 	void remove_client(int fd);
+	void remove_channel(std::shared_ptr<Channel> channel);
 	static void handle_signal(int sig);
 	void send_response(std::string response, int fd);
 	void send_response(rType responseType, std::string sender, std::string recipient, std::string response);

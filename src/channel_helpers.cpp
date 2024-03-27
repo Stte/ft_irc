@@ -46,6 +46,8 @@ void Channel::remove_client(std::string const &nickname)
 		return;
 	}
 	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
+	remove_invite(client);
+	remove_op(client);
 }
 void Channel::remove_client(std::shared_ptr<Client> client)
 {
@@ -55,6 +57,8 @@ void Channel::remove_client(std::shared_ptr<Client> client)
 		return;
 	}
 	this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
+	remove_invite(client);
+	remove_op(client);
 }
 
 /// OPS ///
@@ -105,6 +109,16 @@ void Channel::remove_op(std::string const &nickname)
 	this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), op), this->ops.end());
 }
 
+void Channel::remove_op(std::shared_ptr<Client> client)
+{
+	if (get_op(client) == NULL)
+	{
+		std::cerr << "Client not op" << std::endl;
+		return;
+	}
+	this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), client), this->ops.end());
+}
+
 /// INVITES ///
 
 std::shared_ptr<Client> Channel::get_invite(std::string const &nickname)
@@ -141,6 +155,16 @@ void Channel::remove_invite(std::string const &nickname)
 {
 	std::shared_ptr<Client> client = get_invite(nickname);
 	if (!client)
+	{
+		std::cerr << "Client not invited" << std::endl;
+		return;
+	}
+	this->invite_list.erase(std::remove(this->invite_list.begin(), this->invite_list.end(), client), this->invite_list.end());
+}
+
+void Channel::remove_invite(std::shared_ptr<Client> client)
+{
+	if (get_invite(client) == NULL)
 	{
 		std::cerr << "Client not invited" << std::endl;
 		return;
@@ -278,4 +302,11 @@ bool Channel::is_client_in_channel(std::string const &nickname)
 std::string Channel::get_channel_name()
 {
 	return (this->name);
+}
+
+bool Channel::is_empty()
+{
+	if (this->get_clients().size() == 0)
+		return true;
+	return false;
 }

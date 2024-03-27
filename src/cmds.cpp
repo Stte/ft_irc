@@ -117,6 +117,7 @@ void Server::join(Message &cmd, int fd)
 	{
 		std::shared_ptr<Channel> new_channel = std::make_shared<Channel>(cmd.getParams().front(), user, *this);
 		channels.insert(std::pair<std::string, std::shared_ptr<Channel>>(cmd.getParams().front(), new_channel));
+		user->add_channel(new_channel);
 	}
 	else
 	{
@@ -143,15 +144,21 @@ void Server::quit(int fd)
 
 void Server::quit(Message &cmd, int fd)
 {
-	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
+	std::cout << RED << "Client <" << fd << "> Disconnected. MESSAGE!" << WHITE << std::endl;
 	std::shared_ptr<Client> client = get_client(fd);
 	if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
 	{
 		std::string msg(cmd.getParams().front());
-		// loop client channels
 		for (auto &channel : client->get_channels())
 		{
 			channel->quit(client, msg);
+		}
+	}
+	else
+	{
+		for (auto &channel : client->get_channels())
+		{
+			channel->quit(client);
 		}
 	}
 	this->remove_client(fd);

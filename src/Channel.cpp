@@ -39,6 +39,7 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 		return;
 	}
 	add_client(client);
+	client->add_channel(std::shared_ptr<Channel>(this));
 	broadcast(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()) + " JOIN " + this->name + CRLF);
 	this->topic(client);
 }
@@ -84,6 +85,8 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	remove_client(nickname);
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""), server.get_client(nickname)->get_fd());
+	if (is_empty())
+		server.remove_channel(std::shared_ptr<Channel>(this));
 }
 
 void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname, std::string const &msg)
@@ -101,6 +104,8 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	remove_client(nickname);
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg), server.get_client(nickname)->get_fd());
+	if (is_empty())
+		server.remove_channel(std::shared_ptr<Channel>(this));
 }
 
 void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
@@ -195,23 +200,29 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 
 void Channel::quit(std::shared_ptr<Client> client)
 {
+	std::cout << "Channel quit!" << std::endl;
 	if (get_client(client) == NULL)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
 		return;
 	}
+	broadcast(client, RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), ""));
 	remove_client(client);
-	broadcast(RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), ""));
+	if (is_empty())
+		server.remove_channel(std::shared_ptr<Channel>(this));
 }
 void Channel::quit(std::shared_ptr<Client> client, std::string const &msg)
 {
+	std::cout << "Channel quit! msg" << std::endl;
 	if (get_client(client) == NULL)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
 		return;
 	}
-	remove_client(client);
-	broadcast(RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), msg));
+	broadcast(client, RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), msg));
+	remove_client(client); // TODO: fix this. Causing segfault somehow
+	if (is_empty())
+		server.remove_channel(std::shared_ptr<Channel>(this));
 }
 
 void Channel::message(std::shared_ptr<Client> sender, std::string const &message)
