@@ -88,7 +88,8 @@ void Server::username(std::vector<std::string> username, int fd)
 	{
 		user->set_username(username[0]);
 		user->set_hostname(username[2]);
-		user->set_realname(username[3]);
+		std::string realname = username[3].substr(1);
+		user->set_realname(realname);
 	}
 	if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
 		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
