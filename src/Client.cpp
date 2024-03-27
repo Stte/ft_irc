@@ -44,6 +44,16 @@ std::string Client::get_IPaddr() const
 	return (this->IPaddr);
 }
 
+std::string Client::get_hostname() const
+{
+	return (this->hostname);
+}
+
+std::string Client::get_realname() const
+{
+	return (this->realname);
+}
+
 bool Client::is_registered()
 {
 	return (this->registered);
@@ -77,6 +87,16 @@ void Client::set_username(std::string &username)
 void Client::set_registered(bool value)
 {
 	this->registered = value;
+}
+
+void Client::set_hostname(std::string &hostname)
+{
+	this->hostname = hostname;
+}
+
+void Client::set_realname(std::string &realname)
+{
+	this->realname = realname;
 }
 
 std::vector<std::shared_ptr<Channel>> Client::get_channels() const
