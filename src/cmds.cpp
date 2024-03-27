@@ -18,6 +18,7 @@ void Server::pass(std::string pass, int fd)
 // NICK command
 void Server::nick(std::string nickname, int fd)
 {
+	std::string nick_in_use;
 	size_t pos = nickname.find_first_not_of(" \t\v");
 	if (pos != std::string::npos)
 		nickname = nickname.substr(pos);
@@ -29,7 +30,7 @@ void Server::nick(std::string nickname, int fd)
 	}
 	if (nickname_in_use(nickname) && user->get_nickname() != nickname)
 	{
-		std::string nick_in_use = "!";
+		nick_in_use = nickname;
 		if (user->get_nickname().empty())
 			user->set_nickname(nick_in_use);
 		this->send_response(ERR_NICKINUSE(this->name, nickname), fd);
@@ -48,11 +49,11 @@ void Server::nick(std::string nickname, int fd)
 			user->set_nickname(nickname);
 			if (!old_nick.empty() && old_nick != nickname)
 			{
-				if (old_nick == "!" && !user->get_username().empty())
+				if (old_nick == nick_in_use && !user->get_username().empty())
 				{
 					user->set_registered(true);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
-					this->send_response(RPL_NICKCHANGE(user->get_nickname(), nickname), fd);
+					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 				}
 				else if (!get_clients_channel(nickname).empty())
 				{
