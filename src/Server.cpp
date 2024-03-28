@@ -132,6 +132,8 @@ void Server::exec_cmd(Message &newmsg, int fd)
 	case IRCCommand::CAP:
 	case IRCCommand::PING:
 	case IRCCommand::PONG:
+	case IRCCommand::WHOIS:
+	case IRCCommand::WHO:
 		break;
 	case IRCCommand::JOIN:
 		join(newmsg, fd);
@@ -162,9 +164,6 @@ void Server::exec_cmd(Message &newmsg, int fd)
 		break;
 	case IRCCommand::KICK:
 		kick(newmsg, fd);
-		break;
-	case IRCCommand::WHOIS:
-		whois(*newmsg.getParams().begin(), fd);
 		break;
 	default:
 		this->send_response(ERR_CMDNOTFOUND(std::string("*"), newmsg.getRawCmd()), fd);

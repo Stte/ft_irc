@@ -64,7 +64,7 @@ void Server::nick(std::string nickname, int fd)
 					return ;
 				}
 				else
-					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
+					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 			}
 			if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
 			{
@@ -306,17 +306,4 @@ void Server::kick(Message &cmd, int fd)
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
 	else
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1]);
-}
-
-void Server::whois(std::string &nick, int fd)
-{
-	std::shared_ptr<Client> user = findClient(nick);
-	if (user == nullptr)
-	{
-		this->send_response(ERR_NOSUCHNICK(nick), fd);
-		this->send_response(RPL_ENDOFWHOIS(this->get_name(), nick), fd);
-		return;
-	}
-	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_hostname(), user->get_realname()), fd);
-	this->send_response(RPL_ENDOFWHOIS(this->get_name(), user->get_nickname()), fd);
 }
