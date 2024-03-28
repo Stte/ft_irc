@@ -72,7 +72,8 @@ void Server::nick(std::string nickname, int fd)
 				return ;
 			}
 		}
-		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
+		if (user && user->is_registered())
+			this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 	}
 }
 
