@@ -52,8 +52,8 @@ void Server::nick(std::string nickname, int fd)
 				if (old_nick == nick_in_use && !user->get_username().empty())
 				{
 					user->set_registered(true);
-					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
+					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 					return ;
 				}
 				else if (!get_clients_channel(nickname).empty())
@@ -96,8 +96,6 @@ void Server::username(std::vector<std::string> username, int fd)
 		std::string realname = username[3].substr(1);
 		user->set_realname(realname);
 	}
-	// if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
-	// 	this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }
 
 // JOIN command
