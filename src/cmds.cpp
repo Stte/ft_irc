@@ -54,21 +54,27 @@ void Server::nick(std::string nickname, int fd)
 					user->set_registered(true);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
+					return;
 				}
 				else if (!get_clients_channel(nickname).empty())
 				{
 					std::vector<std::string> clients_channels = get_clients_channel(nickname);
 					for (auto it = clients_channels.begin(); it != clients_channels.end(); ++it)
 						this->channels[*it]->broadcast(RPL_NICKCHANGECHANNEL(old_nick, user->get_username(), user->get_IPaddr(), nickname));
+					return;
 				}
 				else
-					this->send_response(RPL_NICKCHANGE(old_nick, nickname), fd);
+					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
+			}
+			if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
+			{
+				this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 				return;
 			}
 		}
+		if (user && user->is_registered())
+			this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 	}
-	if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
-		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }
 
 // USER command
@@ -91,8 +97,6 @@ void Server::username(std::vector<std::string> username, int fd)
 		std::string realname = username[3].substr(1);
 		user->set_realname(realname);
 	}
-	if (user && user->is_registered() && !user->get_username().empty() && !user->get_nickname().empty())
-		this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }
 
 // JOIN command
@@ -328,17 +332,4 @@ void Server::kick(Message &cmd, int fd)
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
 	else
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1]);
-}
-
-void Server::whois(std::string &nick, int fd)
-{
-	Client *user = findClient(nick);
-	if (user == nullptr)
-	{
-		this->send_response(ERR_NOSUCHNICK(nick), fd);
-		this->send_response(RPL_ENDOFWHOIS(this->get_name(), nick), fd);
-		return;
-	}
-	this->send_response(RPL_WHOISUSER(this->get_name(), user->get_nickname(), user->get_username(), user->get_hostname(), user->get_realname()), fd);
-	this->send_response(RPL_ENDOFWHOIS(this->get_name(), user->get_nickname()), fd);
 }
