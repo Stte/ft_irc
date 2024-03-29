@@ -3,7 +3,7 @@
 // PASS command
 void Server::pass(std::string pass, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	size_t pos = pass.find_first_not_of(" \t\v");
 	if (pos == std::string::npos || pass.empty())
 		this->send_response(ERR_NOTENOUGHPARAM(std::string("*")), fd);
@@ -22,7 +22,7 @@ void Server::nick(std::string nickname, int fd)
 	size_t pos = nickname.find_first_not_of(" \t\v");
 	if (pos != std::string::npos)
 		nickname = nickname.substr(pos);
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (pos == std::string::npos || nickname.empty())
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(std::string("*")), fd);
@@ -74,7 +74,7 @@ void Server::nick(std::string nickname, int fd)
 // USER command
 void Server::username(std::vector<std::string> username, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (user && username.size() < 4)
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
@@ -98,7 +98,7 @@ void Server::username(std::vector<std::string> username, int fd)
 // JOIN command
 void Server::join(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 
 	if (!user->is_registered())
 	{
@@ -115,8 +115,8 @@ void Server::join(Message &cmd, int fd)
 	// check if channel exists and if not create it
 	if (channels.find(cmd.getParams().front()) == channels.end())
 	{
-		std::shared_ptr<Channel> new_channel = std::make_shared<Channel>(cmd.getParams().front(), user, *this);
-		channels.insert(std::pair<std::string, std::shared_ptr<Channel>>(cmd.getParams().front(), new_channel));
+		Channel *new_channel = new Channel(cmd.getParams().front(), user, *this);
+		channels.insert(std::pair<std::string, Channel *>(cmd.getParams().front(), new_channel));
 		user->add_channel(new_channel);
 	}
 	else
@@ -132,7 +132,7 @@ void Server::join(Message &cmd, int fd)
 void Server::quit(int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-	std::shared_ptr<Client> client = get_client(fd);
+	Client *client = get_client(fd);
 	// loop client channels
 	for (auto &channel : client->get_channels())
 	{
@@ -145,7 +145,7 @@ void Server::quit(int fd)
 void Server::quit(Message &cmd, int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected. MESSAGE!" << WHITE << std::endl;
-	std::shared_ptr<Client> client = get_client(fd);
+	Client *client = get_client(fd);
 	if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
 	{
 		std::string msg(cmd.getParams().front());
@@ -167,7 +167,7 @@ void Server::quit(Message &cmd, int fd)
 
 void Server::privmsg(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
@@ -197,7 +197,7 @@ void Server::privmsg(Message &cmd, int fd)
 		}
 		else
 		{
-			std::shared_ptr<Client> recipient = get_client(cmd.getParams().front());
+			Client *recipient = get_client(cmd.getParams().front());
 			this->send_response(RPL_PRIVMSG(CLIENT(user->get_nickname(), user->get_username(), user->get_IPaddr()), recipient->get_nickname(), cmd.getParams()[1]), recipient->get_fd());
 		}
 	}
@@ -205,7 +205,7 @@ void Server::privmsg(Message &cmd, int fd)
 
 void Server::mode(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
@@ -251,7 +251,7 @@ void Server::mode(Message &cmd, int fd)
 
 void Server::invite(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
@@ -272,7 +272,7 @@ void Server::invite(Message &cmd, int fd)
 
 void Server::topic(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
@@ -301,7 +301,7 @@ void Server::topic(Message &cmd, int fd)
 
 void Server::kick(Message &cmd, int fd)
 {
-	std::shared_ptr<Client> user = get_client(fd);
+	Client *user = get_client(fd);
 	if (!user->is_registered())
 	{
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
@@ -332,7 +332,7 @@ void Server::kick(Message &cmd, int fd)
 
 void Server::whois(std::string &nick, int fd)
 {
-	std::shared_ptr<Client> user = findClient(nick);
+	Client *user = findClient(nick);
 	if (user == nullptr)
 	{
 		this->send_response(ERR_NOSUCHNICK(nick), fd);

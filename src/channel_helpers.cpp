@@ -2,12 +2,12 @@
 
 /// CLIENTS ///
 
-std::vector<std::shared_ptr<Client>> Channel::get_clients() const
+std::vector<Client *> Channel::get_clients() const
 {
 	return (this->clients);
 }
 
-std::shared_ptr<Client> Channel::get_client(std::string const &nickname)
+Client *Channel::get_client(std::string const &nickname)
 {
 	for (const auto &client : clients)
 	{
@@ -17,7 +17,7 @@ std::shared_ptr<Client> Channel::get_client(std::string const &nickname)
 	return (nullptr);
 }
 
-std::shared_ptr<Client> Channel::get_client(std::shared_ptr<Client> client)
+Client *Channel::get_client(Client *client)
 {
 	for (const auto &c : clients)
 	{
@@ -27,7 +27,7 @@ std::shared_ptr<Client> Channel::get_client(std::shared_ptr<Client> client)
 	return (nullptr);
 }
 
-void Channel::add_client(std::shared_ptr<Client> client)
+void Channel::add_client(Client *client)
 {
 	if (get_client(client->get_nickname()) != nullptr)
 	{
@@ -39,7 +39,7 @@ void Channel::add_client(std::shared_ptr<Client> client)
 
 void Channel::remove_client(std::string const &nickname)
 {
-	std::shared_ptr<Client> client = get_client(nickname);
+	Client *client = get_client(nickname);
 	if (!client)
 	{
 		std::cerr << "Client not in channel" << std::endl;
@@ -49,7 +49,7 @@ void Channel::remove_client(std::string const &nickname)
 	remove_invite(client);
 	remove_op(client);
 }
-void Channel::remove_client(std::shared_ptr<Client> client)
+void Channel::remove_client(Client *client)
 {
 	if (!get_client(client))
 	{
@@ -63,12 +63,12 @@ void Channel::remove_client(std::shared_ptr<Client> client)
 
 /// OPS ///
 
-std::vector<std::shared_ptr<Client>> Channel::get_ops() const
+std::vector<Client *> Channel::get_ops() const
 {
 	return (this->ops);
 }
 
-std::shared_ptr<Client> Channel::get_op(std::string const &nickname)
+Client *Channel::get_op(std::string const &nickname)
 {
 	for (const auto &op : ops)
 	{
@@ -78,7 +78,7 @@ std::shared_ptr<Client> Channel::get_op(std::string const &nickname)
 	return (nullptr);
 }
 
-std::shared_ptr<Client> Channel::get_op(std::shared_ptr<Client> client)
+Client *Channel::get_op(Client *client)
 {
 	for (const auto &op : ops)
 	{
@@ -88,7 +88,7 @@ std::shared_ptr<Client> Channel::get_op(std::shared_ptr<Client> client)
 	return (nullptr);
 }
 
-void Channel::add_op(std::shared_ptr<Client> client)
+void Channel::add_op(Client *client)
 {
 	if (get_op(client->get_nickname()) != nullptr)
 	{
@@ -100,7 +100,7 @@ void Channel::add_op(std::shared_ptr<Client> client)
 
 void Channel::remove_op(std::string const &nickname)
 {
-	std::shared_ptr<Client> op = get_op(nickname);
+	Client *op = get_op(nickname);
 	if (!op)
 	{
 		std::cerr << "Client not op" << std::endl;
@@ -109,7 +109,7 @@ void Channel::remove_op(std::string const &nickname)
 	this->ops.erase(std::remove(this->ops.begin(), this->ops.end(), op), this->ops.end());
 }
 
-void Channel::remove_op(std::shared_ptr<Client> client)
+void Channel::remove_op(Client *client)
 {
 	if (get_op(client) == NULL)
 	{
@@ -121,7 +121,7 @@ void Channel::remove_op(std::shared_ptr<Client> client)
 
 /// INVITES ///
 
-std::shared_ptr<Client> Channel::get_invite(std::string const &nickname)
+Client *Channel::get_invite(std::string const &nickname)
 {
 	for (const auto &invite : invite_list)
 	{
@@ -131,7 +131,7 @@ std::shared_ptr<Client> Channel::get_invite(std::string const &nickname)
 	return (nullptr);
 }
 
-std::shared_ptr<Client> Channel::get_invite(std::shared_ptr<Client> client)
+Client *Channel::get_invite(Client *client)
 {
 	for (const auto &invite : invite_list)
 	{
@@ -141,7 +141,7 @@ std::shared_ptr<Client> Channel::get_invite(std::shared_ptr<Client> client)
 	return (nullptr);
 }
 
-void Channel::add_invite(std::shared_ptr<Client> client)
+void Channel::add_invite(Client *client)
 {
 	if (get_invite(client->get_nickname()) != nullptr)
 	{
@@ -153,7 +153,7 @@ void Channel::add_invite(std::shared_ptr<Client> client)
 
 void Channel::remove_invite(std::string const &nickname)
 {
-	std::shared_ptr<Client> client = get_invite(nickname);
+	Client *client = get_invite(nickname);
 	if (!client)
 	{
 		std::cerr << "Client not invited" << std::endl;
@@ -162,7 +162,7 @@ void Channel::remove_invite(std::string const &nickname)
 	this->invite_list.erase(std::remove(this->invite_list.begin(), this->invite_list.end(), client), this->invite_list.end());
 }
 
-void Channel::remove_invite(std::shared_ptr<Client> client)
+void Channel::remove_invite(Client *client)
 {
 	if (get_invite(client) == NULL)
 	{
@@ -186,7 +186,7 @@ std::string Channel::get_topic() const
 
 /// SETTERS ///
 
-void Channel::set_key(std::shared_ptr<Client> commander, std::string const &key)
+void Channel::set_key(Client *commander, std::string const &key)
 {
 	if (!get_op(commander))
 	{
@@ -201,7 +201,7 @@ void Channel::set_topic(std::string topic)
 	this->topic_str = topic;
 }
 
-void Channel::set_limit(std::shared_ptr<Client> commander, unsigned int limit)
+void Channel::set_limit(Client *commander, unsigned int limit)
 {
 	if (!get_op(commander))
 	{
@@ -216,7 +216,7 @@ void Channel::set_limit(std::shared_ptr<Client> commander, unsigned int limit)
 /// @brief Checks if the channel is invite only and if the client is in the invite list
 /// @param client
 /// @return true if the channel is not invite only or if the client is in the invite list
-bool Channel::invite_check(std::shared_ptr<Client> client)
+bool Channel::invite_check(Client *client)
 {
 	if (this->modes & MODE_I) // if channel is invite only
 	{
@@ -286,7 +286,7 @@ void Channel::broadcast(std::string const &message)
 	server.send_response(rType::ChannelToClients, "P0INTL655", name, message);
 }
 
-void Channel::broadcast(std::shared_ptr<Client> sender, std::string const &message)
+void Channel::broadcast(Client *sender, std::string const &message)
 {
 	std::cout << "Broadcasting: " << message << std::endl;
 	server.send_response(rType::ClientToChannel, sender->get_nickname(), name, message);

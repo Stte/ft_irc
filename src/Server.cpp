@@ -9,6 +9,14 @@ Server::Server(int port, const std::string &password)
 	this->server_socket = -1;
 }
 
+Server::~Server()
+{
+	for (auto client : clients)
+		delete client;
+	for (auto channel : channels)
+		delete channel.second;
+}
+
 // Creeating the server socket
 void Server::create_server_socket()
 {
@@ -75,7 +83,7 @@ void Server::accept_new_client()
 	socklen_t len;
 	int usr_fd;
 
-	std::shared_ptr<Client> usr = std::make_shared<Client>(); // create a new client
+	Client *usr = new Client(); // create a new client
 	len = sizeof(usraddr);
 	usr_fd = accept(this->server_socket, (sockaddr *)&(usraddr), &len); // accept the new client
 	if (usr_fd == -1)
@@ -104,7 +112,7 @@ void Server::receive_new_data(int fd)
 	std::vector<std::string> cmd_vec;
 	char buff[1024];									 // buffer for the received data
 	memset(buff, 0, sizeof(buff));						 // clear the buffer
-	std::shared_ptr<Client> user = get_client(fd);		 // get the client by fd
+	Client *user = get_client(fd);						 // get the client by fd
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // receive the data
 	if (bytes <= 0)										 // check if the client disconnected
 		quit(fd);
@@ -120,7 +128,8 @@ void Server::receive_new_data(int fd)
 			Message newmsg(e);
 			this->exec_cmd(newmsg, fd);
 		}
-		user->clear_buffer();
+		if (get_client(fd)) // check if the client is still connected. Fixes the bug when the client disconnects.
+			user->clear_buffer();
 	}
 }
 

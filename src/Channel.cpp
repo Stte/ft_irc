@@ -4,7 +4,7 @@ Channel::Channel() : name(""), server(*(new Server(0, ""))), topic_str(""), mode
 {
 }
 
-Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server &server) : name(name), server(server), topic_str(""), modes(0), limit(0)
+Channel::Channel(std::string const &name, Client *client, Server &server) : name(name), server(server), topic_str(""), modes(0), limit(0)
 {
 	// do name check?
 	// check that server is valid
@@ -12,7 +12,7 @@ Channel::Channel(std::string const &name, std::shared_ptr<Client> client, Server
 	add_op(client);
 }
 
-void Channel::join(std::shared_ptr<Client> client, std::string const &key)
+void Channel::join(Client *client, std::string const &key)
 {
 	if (!invite_check(client))
 	{
@@ -39,12 +39,12 @@ void Channel::join(std::shared_ptr<Client> client, std::string const &key)
 		return;
 	}
 	add_client(client);
-	client->add_channel(std::shared_ptr<Channel>(this));
+	client->add_channel(this);
 	broadcast(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()) + " JOIN " + this->name + CRLF);
 	this->topic(client);
 }
 
-void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickname)
+void Channel::invite(Client *commander, std::string const &nickname)
 {
 	if (!get_op(commander))
 	{
@@ -52,7 +52,7 @@ void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickn
 		server.send_response(ERR_CHANOPRIVSNEEDED(this->name), commander->get_fd());
 		return;
 	}
-	std::shared_ptr<Client> client = server.get_client(nickname);
+	Client *client = server.get_client(nickname);
 	if (client == NULL)
 	{
 		std::cerr << "Client could not invite: client does not exist" << std::endl;
@@ -70,7 +70,7 @@ void Channel::invite(std::shared_ptr<Client> commander, std::string const &nickn
 	server.send_response(RPL_INVITED(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), client->get_nickname(), this->name), client->get_fd());
 }
 
-void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname)
+void Channel::kick(Client *commander, std::string const &nickname)
 {
 	if (!get_op(commander))
 	{
@@ -86,10 +86,10 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""), server.get_client(nickname)->get_fd());
 	if (is_empty())
-		server.remove_channel(std::shared_ptr<Channel>(this));
+		server.remove_channel(this);
 }
 
-void Channel::kick(std::shared_ptr<Client> commander, std::string const &nickname, std::string const &msg)
+void Channel::kick(Client *commander, std::string const &nickname, std::string const &msg)
 {
 	if (!get_op(commander))
 	{
@@ -105,10 +105,10 @@ void Channel::kick(std::shared_ptr<Client> commander, std::string const &nicknam
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg), server.get_client(nickname)->get_fd());
 	if (is_empty())
-		server.remove_channel(std::shared_ptr<Channel>(this));
+		server.remove_channel(this);
 }
 
-void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mode)
+void Channel::mode(Client *commander, int action, char const &mode)
 {
 	if (!get_op(commander))
 	{
@@ -121,7 +121,7 @@ void Channel::mode(std::shared_ptr<Client> commander, int action, char const &mo
 		remove_mode(mode);
 }
 
-void Channel::op(std::shared_ptr<Client> commander, int action, std::string const &nickname)
+void Channel::op(Client *commander, int action, std::string const &nickname)
 {
 	if (!get_op(commander))
 	{
@@ -132,7 +132,7 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 	{
 		if (get_op(nickname) == NULL)
 		{
-			std::shared_ptr<Client> client = server.get_client(nickname);
+			Client *client = server.get_client(nickname);
 			if (client == NULL)
 			{
 				server.send_response(ERR_NOSUCHNICK(nickname), commander->get_fd());
@@ -154,7 +154,7 @@ void Channel::op(std::shared_ptr<Client> commander, int action, std::string cons
 	}
 }
 
-void Channel::topic(std::shared_ptr<Client> commander)
+void Channel::topic(Client *commander)
 {
 	if (this->get_client(commander) == NULL)
 	{
@@ -167,7 +167,7 @@ void Channel::topic(std::shared_ptr<Client> commander)
 		server.send_response(RPL_TOPIC(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->get_channel_name(), this->get_topic()), commander->get_fd());
 }
 
-void Channel::topic(std::shared_ptr<Client> commander, int action, std::string const &topic)
+void Channel::topic(Client *commander, int action, std::string const &topic)
 {
 	if (action == ADD)
 	{
@@ -198,7 +198,7 @@ void Channel::topic(std::shared_ptr<Client> commander, int action, std::string c
 	}
 }
 
-void Channel::quit(std::shared_ptr<Client> client)
+void Channel::quit(Client *client)
 {
 	std::cout << "Channel quit!" << std::endl;
 	if (get_client(client) == NULL)
@@ -209,9 +209,9 @@ void Channel::quit(std::shared_ptr<Client> client)
 	broadcast(client, RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), ""));
 	remove_client(client);
 	if (is_empty())
-		server.remove_channel(std::shared_ptr<Channel>(this));
+		server.remove_channel(this);
 }
-void Channel::quit(std::shared_ptr<Client> client, std::string const &msg)
+void Channel::quit(Client *client, std::string const &msg)
 {
 	std::cout << "Channel quit! msg" << std::endl;
 	if (get_client(client) == NULL)
@@ -222,10 +222,10 @@ void Channel::quit(std::shared_ptr<Client> client, std::string const &msg)
 	broadcast(client, RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), msg));
 	remove_client(client); // TODO: fix this. Causing segfault somehow
 	if (is_empty())
-		server.remove_channel(std::shared_ptr<Channel>(this));
+		server.remove_channel(this);
 }
 
-void Channel::message(std::shared_ptr<Client> sender, std::string const &message)
+void Channel::message(Client *sender, std::string const &message)
 {
 	if (get_client(sender) == NULL)
 	{

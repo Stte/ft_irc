@@ -28,19 +28,21 @@ void Server::remove_client(int fd)
 			break;
 		}
 	}
-	for (std::vector<std::shared_ptr<Client>>::iterator it = this->clients.begin(); it != this->clients.end(); ++it)
+	for (std::vector<Client *>::iterator it = this->clients.begin(); it != this->clients.end(); ++it)
 	{
 		if ((*it)->get_fd() == fd)
 		{
+			delete *it;
 			this->clients.erase(it);
 			break;
 		}
 	}
 }
-void Server::remove_channel(std::shared_ptr<Channel> channel)
+void Server::remove_channel(Channel *channel)
 {
 	std::cout << channel->get_channel_name() << " channel removed!" << std::endl;
 	this->channels.erase(channel->get_channel_name());
+	delete channel;
 }
 
 // Signal handler
@@ -60,14 +62,13 @@ void Server::send_response(std::string response, int fd)
 		std::cerr << "Response send() faild" << std::endl;
 }
 
-const std::shared_ptr<Client> Server::findClient(std::string &nickname) const
+Client *Server::findClient(std::string &nickname) const
 {
 	for (auto &client : clients)
 	{
 		if (client->get_nickname() == nickname)
 			return client;
 	}
-
 	return nullptr;
 }
 
@@ -110,10 +111,10 @@ void Server::send_response(rType responseType, std::string sender, std::string r
 	case rType::ClientToClient:
 	case rType::ServerToClient:
 	{
-		const std::shared_ptr<Client> findRecipient = findClient(recipient);
+		const Client *findRecipient = findClient(recipient);
 		if (findRecipient == nullptr)
 		{
-			const std::shared_ptr<Client> findSender = findClient(sender);
+			const Client *findSender = findClient(sender);
 			if (findSender == nullptr)
 			{
 				std::cerr << "Server failed to locate sender: " << sender << std::endl;
@@ -134,7 +135,7 @@ void Server::send_response(rType responseType, std::string sender, std::string r
 	}
 }
 // Get the specific client
-std::shared_ptr<Client> Server::get_client(int fd)
+Client *Server::get_client(int fd)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)
 		if (this->clients[i]->get_fd() == fd)
@@ -143,7 +144,7 @@ std::shared_ptr<Client> Server::get_client(int fd)
 }
 
 // Get the specific client
-std::shared_ptr<Client> Server::get_client(std::string nickname)
+Client *Server::get_client(std::string nickname)
 {
 	for (size_t i = 0; i < this->clients.size(); i++)
 		if (this->clients[i]->get_nickname() == nickname)

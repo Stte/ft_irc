@@ -26,7 +26,7 @@ private:
 	std::string buffer;
 	std::string hostname;
 	std::string realname;
-	std::vector<std::shared_ptr<Channel>> channels;
+	std::vector<Channel *> channels;
 
 public:
 	Client();
@@ -51,13 +51,13 @@ public:
 	std::string get_IPaddr() const;
 	std::string get_hostname() const;
 	std::string get_realname() const;
-	std::vector<std::shared_ptr<Channel>> get_channels() const;
+	std::vector<Channel *> get_channels() const;
 
 	// Add
-	void add_channel(std::shared_ptr<Channel> channel);
+	void add_channel(Channel *channel);
 
 	// Remove
-	void remove_channel(std::shared_ptr<Channel> channel);
+	void remove_channel(Channel *channel);
 
 	// Methods
 	void clear_buffer();

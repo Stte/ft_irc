@@ -44,17 +44,18 @@ private:
 	const std::string password;
 	int server_socket;
 	static bool signal;
-	std::vector<std::shared_ptr<Client>> clients;
+	std::vector<Client *> clients;
 	std::vector<struct pollfd> fds;
-	std::map<std::string, std::shared_ptr<Channel>> channels;
-	const std::shared_ptr<Client> findClient(std::string &nickname) const;
+	std::map<std::string, Channel *> channels;
+	Client *findClient(std::string &nickname) const;
 
 public:
 	Server(int port, const std::string &password);
+	~Server();
 
 	// Getters
-	std::shared_ptr<Client> get_client(int fd);
-	std::shared_ptr<Client> get_client(std::string nickname);
+	Client *get_client(int fd);
+	Client *get_client(std::string nickname);
 	std::string get_name();
 	std::vector<std::string> get_clients_channel(std::string const &nickname);
 
@@ -65,7 +66,7 @@ public:
 	void accept_new_client();
 	void receive_new_data(int fd);
 	void remove_client(int fd);
-	void remove_channel(std::shared_ptr<Channel> channel);
+	void remove_channel(Channel *channel);
 	static void handle_signal(int sig);
 	void send_response(std::string response, int fd);
 	void send_response(rType responseType, std::string sender, std::string recipient, std::string response);
