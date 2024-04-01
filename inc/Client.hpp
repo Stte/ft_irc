@@ -21,6 +21,7 @@ private:
 	int fd;
 	std::string IPaddr;
 	bool registered;
+	bool logged_in;
 	std::string nickname;
 	std::string username;
 	std::string buffer;
@@ -41,10 +42,12 @@ public:
 	void set_realname(std::string &realname);
 	void set_username(std::string &username);
 	void set_registered(bool value);
+	void set_logged_in(bool value);
 
 	// Getter
 	int get_fd() const;
 	bool is_registered();
+	bool is_logged_in();
 	std::string get_nickname() const;
 	std::string get_username() const;
 	std::string get_buffer() const;

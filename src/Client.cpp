@@ -59,6 +59,11 @@ bool Client::is_registered()
 	return (this->registered);
 }
 
+bool Client::is_logged_in()
+{
+	return (this->logged_in);
+}
+
 void Client::set_fd(int fd)
 {
 	this->fd = fd;
@@ -87,6 +92,11 @@ void Client::set_username(std::string &username)
 void Client::set_registered(bool value)
 {
 	this->registered = value;
+}
+
+void Client::set_logged_in(bool value)
+{
+	this->logged_in = value;
 }
 
 void Client::set_hostname(std::string &hostname)

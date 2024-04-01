@@ -30,7 +30,7 @@ void Server::nick(std::string nickname, int fd)
 	}
 	if (nickname_in_use(nickname) && user->get_nickname() != nickname)
 	{
-		nick_in_use = nickname;
+		nick_in_use = "Changing to";
 		if (user->get_nickname().empty())
 			user->set_nickname(nick_in_use);
 		this->send_response(ERR_NICKINUSE(this->name, nickname), fd);
@@ -51,7 +51,8 @@ void Server::nick(std::string nickname, int fd)
 			{
 				if (old_nick == nick_in_use && !user->get_username().empty())
 				{
-					user->set_registered(true);
+					std::cout << "here" << std::endl;
+					user->set_logged_in(true);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 					return;
@@ -66,14 +67,9 @@ void Server::nick(std::string nickname, int fd)
 				else
 					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
 			}
-			if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty())
-			{
-				this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
-				return;
-			}
 		}
-		if (user && user->is_registered())
-			this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
+		if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty() && user->get_nickname() != nick_in_use && !user->is_logged_in())
+				this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 	}
 }
 
@@ -98,6 +94,8 @@ void Server::username(std::vector<std::string> username, int fd)
 		std::string realname = username[3].substr(1);
 		user->set_realname(realname);
 	}
+	if (user && user->is_registered() && !user->get_nickname().empty() && !user->get_username().empty() && user->get_nickname() != "Changing to" && !user->is_logged_in())
+				this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 }
 
 // JOIN command
@@ -149,7 +147,7 @@ void Server::quit(int fd)
 
 void Server::quit(Message &cmd, int fd)
 {
-	std::cout << RED << "Client <" << fd << "> Disconnected. MESSAGE!" << WHITE << std::endl;
+	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 	Client *client = get_client(fd);
 	if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
 	{
