@@ -1,6 +1,27 @@
 #include "Server.hpp"
 #include "Client.hpp"
 
+void welcome_message()
+{	
+	std::cout << R"(
+   ╦╦═╗╔═╗  ╔═╗┌─┐┬─┐┬  ┬┌─┐┬─┐                   
+   ║╠╦╝║    ╚═╗├┤ ├┬┘└┐┌┘├┤ ├┬┘                   
+ooo╩╩╚═╚═╝  ╚═╝└─┘┴└─ └┘ └─┘┴└─ooo                
+                                                                                                  
+oooooooooooooooooooooooooooooooooooooooooooooooooo                                                 
+╔╦╗┬┌─┐┬ ┬┌─┐┬┬  ┬┌─┐  ╦╔═┌─┐┬─┐┌─┐┌┬┐┌─┐┬┌┬┐┬┌─┐ 
+║║║││  ├─┤├─┤││  │└─┐  ╠╩╗├─┤├┬┘├─┤ │ ┌─┘│ │││└─┐ 
+╩ ╩┴└─┘┴ ┴┴ ┴┴┴─┘┴└─┘  ╩ ╩┴ ┴┴└─┴ ┴ ┴ └─┘┴─┴┘┴└─┘ 
+╔╦╗┌─┐┌─┐┌┬┐┬ ┬  ╔═╗┌─┐┌─┐┌─┐┌─┐                  
+ ║ ├┤ ├┤ ││││ │  ╚═╗├─┘│ ││ │├┤                   
+ ╩ └─┘└─┘┴ ┴└─┘  ╚═╝┴  └─┘└─┘└                    
+╔╦╗┌─┐┌─┐┌┐┌  ╦═╗┬ ┬┬┌┐┌┌─┐                       
+ ║║├┤ ├─┤│││  ╠╦╝│ │││││├─┤                       
+═╩╝└─┘┴ ┴┘└┘  ╩╚═└─┘┴┘└┘┴ ┴                                                                        
+ooooooooooooooooooooooooooooooooooooooooooooooooo)"
+	<< std::endl;
+
+}
 
 int arg_check(const std::string &port, const std::string &pass)
 {
@@ -32,7 +53,7 @@ int main(int argc, char **argv)
 		std::cerr << "Wrong args - ./ircserv port password" << std::endl;
 		return (1);
 	}
-	std::cout << YELLOW << "---- IRC SERVER ----" << WHITE << std::endl;
+	welcome_message();
 	if (arg_check(argv[1], argv[2]))
 		return (1);
 	Server serv(std::stoi(argv[1]), argv[2]);
