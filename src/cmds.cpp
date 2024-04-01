@@ -84,6 +84,7 @@ void Server::username(std::vector<std::string> username, int fd)
 	if (user && username.size() < 4)
 	{
 		this->send_response(ERR_NOTENOUGHPARAM(user->get_nickname()), fd);
+		return ;
 	}
 	if (user && !user->get_username().empty())
 	{
