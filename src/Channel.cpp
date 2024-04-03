@@ -1,9 +1,5 @@
 #include "Channel.hpp"
 
-Channel::Channel() : name(""), server(*(new Server(0, ""))), topic_str(""), modes(0), limit(0)
-{
-}
-
 Channel::Channel(std::string const &name, Client *client, Server &server) : name(name), server(server), topic_str(""), modes(0), limit(0)
 {
 	// do name check?

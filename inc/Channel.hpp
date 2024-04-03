@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "Client.hpp"
 #include "Server.hpp"
 #include <memory>
 
@@ -26,7 +25,6 @@ class Server;
 class Channel
 {
 public:
-	Channel();
 	Channel(std::string const &name, Client *client, Server &server);
 
 	void join(Client *client, std::string const &key);
@@ -61,6 +59,7 @@ public:
 	bool is_empty();
 
 private:
+	Channel();
 	std::string name;
 	Server &server;
 	std::vector<Client *> clients;

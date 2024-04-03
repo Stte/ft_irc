@@ -51,7 +51,6 @@ void Server::nick(std::string nickname, int fd)
 			{
 				if (old_nick == nick_in_use && !user->get_username().empty())
 				{
-					std::cout << "here" << std::endl;
 					user->set_logged_in(true);
 					this->send_response(RPL_CONNECTED(user->get_nickname()), fd);
 					this->send_response(RPL_NICKCHANGE(old_nick, user->get_nickname()), fd);
@@ -246,10 +245,6 @@ void Server::mode(Message &cmd, int fd)
 			}
 		}
 	}
-	else
-	{
-		// Server mode
-	}
 }
 
 void Server::invite(Message &cmd, int fd)
@@ -320,13 +315,12 @@ void Server::kick(Message &cmd, int fd)
 		this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
 		return;
 	}
-	// print params
-	std::cout << "Params:" << std::endl;
-	for (auto &param : cmd.getParams())
-	{
-		std::cout << param << std::endl;
-	}
-
+	// // print params
+	// std::cout << "Params:" << std::endl;
+	// for (auto &param : cmd.getParams())
+	// {
+	// 	std::cout << param << std::endl;
+	// }
 	if (cmd.getParams().size() > 2)
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
 	else
