@@ -63,9 +63,13 @@ Used to join a channel. Replace `channelname` with the name of the channel you w
 #### MODE
 
 Syntax: `MODE #channelname +/- o nickname` - Give/take channel operator privilege.
+
 Syntax: `MODE #channelname +/- i` - Set/remove Invite-only channel.
+
 Syntax: `MODE #channelname +/- t` -  Set/remove the restrictions of the TOPIC command to channel operators.
+
 Syntax: `MODE #channelname +/- k password` - Set/remove the channel key (password).
+
 Syntax: `MODE #channelname +/- l limit` - Set/remove the user limit to channel.
 
 Used to change the mode of a channel or user.
