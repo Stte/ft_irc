@@ -4,7 +4,6 @@
 #include "Client.hpp"
 #include "Server.hpp"
 #include "Replays.hpp"
-#include <iostream>
 #include <string>
 #include <vector>
 

@@ -1,6 +1,5 @@
 #include "Channel.hpp"
-
-/// CLIENTS ///
+#include "Server.hpp"
 
 std::vector<Client *> Channel::get_clients() const
 {
@@ -213,9 +212,6 @@ void Channel::set_limit(Client *commander, unsigned int limit)
 
 /// INVITE CHECK ///
 
-/// @brief Checks if the channel is invite only and if the client is in the invite list
-/// @param client
-/// @return true if the channel is not invite only or if the client is in the invite list
 bool Channel::invite_check(Client *client)
 {
 	if (this->modes & MODE_I) // if channel is invite only
@@ -227,9 +223,6 @@ bool Channel::invite_check(Client *client)
 	return (true); // if channel is not invite only
 }
 
-/// @brief Checks if the channel is key protected and if the client has the correct key
-/// @param key string
-/// @return true if the channel is not key protected or if the client has the correct key
 bool Channel::key_check(std::string const &key) // todo: check if this is correct
 {
 	if (this->modes & MODE_K) // if channel is key protected
@@ -241,8 +234,6 @@ bool Channel::key_check(std::string const &key) // todo: check if this is correc
 	return (true); // if channel is not key protected
 }
 
-/// @brief Checks if the channel has a user limit and if the channel is full
-/// @return true if the channel has no user limit or if the channel is not full
 bool Channel::limit_check()
 {
 	if (this->modes & MODE_L) // if channel has a user limit

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "Server.hpp"
 #include <memory>
 
 #define MODE_I 0b00000001
@@ -28,7 +27,6 @@ public:
 	Channel(std::string const &name, Client *client, Server &server);
 
 	void join(Client *client, std::string const &key);
-	// void part(Client &client);
 	void invite(Client *commander, std::string const &nickname);
 	void kick(Client *commander, std::string const &nickname);
 	void kick(Client *commander, std::string const &nickname, std::string const &msg);
@@ -55,7 +53,6 @@ public:
 	bool is_client_in_channel(std::string const &nickname);
 	std::string get_channel_name();
 
-	// bool is_op(Client* client);
 	bool is_empty();
 
 private:

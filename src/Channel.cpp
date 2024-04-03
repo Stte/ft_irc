@@ -1,9 +1,8 @@
 #include "Channel.hpp"
+#include "Server.hpp"
 
 Channel::Channel(std::string const &name, Client *client, Server &server) : name(name), server(server), topic_str(""), modes(0), limit(0)
 {
-	// do name check?
-	// check that server is valid
 	add_client(client);
 	add_op(client);
 }
@@ -216,7 +215,7 @@ void Channel::quit(Client *client, std::string const &msg)
 		return;
 	}
 	broadcast(client, RPL_QUIT(CLIENT(client->get_nickname(), client->get_username(), client->get_IPaddr()), msg));
-	remove_client(client); // TODO: fix this. Causing segfault somehow
+	remove_client(client);
 	if (is_empty())
 		server.remove_channel(this);
 }

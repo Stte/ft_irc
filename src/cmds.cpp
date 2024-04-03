@@ -107,7 +107,6 @@ void Server::join(Message &cmd, int fd)
 		this->send_response(ERR_NOTREGISTERED(this->get_name()), fd);
 		return;
 	}
-
 	// check if JOIN command has enough parameters
 	if (cmd.getParams().size() == 0)
 	{
@@ -135,7 +134,6 @@ void Server::quit(int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 	Client *client = get_client(fd);
-	// loop client channels
 	for (auto &channel : client->get_channels())
 	{
 		channel->quit(client);
@@ -315,12 +313,6 @@ void Server::kick(Message &cmd, int fd)
 		this->send_response(ERR_NOSUCHCHANNEL(cmd.getParams().front()), fd);
 		return;
 	}
-	// // print params
-	// std::cout << "Params:" << std::endl;
-	// for (auto &param : cmd.getParams())
-	// {
-	// 	std::cout << param << std::endl;
-	// }
 	if (cmd.getParams().size() > 2)
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
 	else

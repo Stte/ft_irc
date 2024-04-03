@@ -1,7 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <iostream>
 #include <vector>
 #include <sys/socket.h>
 #include <sys/types.h>

@@ -2,20 +2,15 @@
 #define REPLAYS_H
 
 #define CRLF "\r\n"
-
 #define CLIENT(nickname, username, IPaddr) (":" + nickname + "!~" + username + "@" + IPaddr)
 
+// REPLAYS
+
 #define RPL_PRIVMSG(CLIENT, target, text) (CLIENT + " PRIVMSG " + target + " " + text + CRLF)
-
-// replays
-
 #define RPL_NICKCHANGECHANNEL(oldnickname, username, hostname, nickname) (":" + oldnickname + "!~" + username + "@" + hostname + " NICK :" + nickname + CRLF)
 #define RPL_CONNECTED(nickname) (": 001 " + nickname + " : Welcome to the IRC server!" + CRLF)
 #define RPL_NICKCHANGE(oldnickname, nickname) (":" + oldnickname + " NICK " + nickname + CRLF)
-
-// #define RPL_UMODEIS(hostname, channelname, mode, user) (":" + hostname + " MODE " + channelname + " " + mode + " " + user + CRLF)
 #define RPL_UMODEIS(NICK, modes) (NICK + " " + modes + CRLF)
-
 #define RPL_CREATIONTIME(nickname, channelname, creationtime) (": 329 " + nickname + " #" + channelname + " " + creationtime + CRLF)
 #define RPL_CHANNELMODES(nickname, channelname, modes) (": 324 " + nickname + " #" + channelname + " " + modes + CRLF)
 #define RPL_CHANGEMODE(hostname, channelname, mode, arguments) (":" + hostname + " MODE #" + channelname + " " + mode + " " + arguments + CRLF)

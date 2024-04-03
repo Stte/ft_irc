@@ -124,7 +124,6 @@ void Server::receive_new_data(int fd)
 		cmd_vec = split_recived_buffer(user->get_buffer());
 		for (auto e : cmd_vec)
 		{
-			// std::cout << "Mike: put a msg at the begginging - " << e << std::endl;
 			Message newmsg(e);
 			this->exec_cmd(newmsg, fd);
 		}

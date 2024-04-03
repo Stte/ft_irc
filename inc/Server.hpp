@@ -75,7 +75,6 @@ public:
 	bool nickname_in_use(std::string &nickname);
 	bool is_valid_nickname(std::string &nickname);
 
-	// parser
 
 	// CMDS
 	void nick(std::string nickname, int fd);
@@ -89,8 +88,6 @@ public:
 	void invite(Message &cmd, int fd);
 	void topic(Message &cmd, int fd);
 	void kick(Message &cmd, int fd);
-	// void part(Message &cmd, int fd);
-	void whois(std::string &nickname, int fd);
 };
 
 #endif

@@ -23,7 +23,6 @@ const std::string &Message::getRawCmd(){ return rawCmd; }
 
 void Message::parse()
 {
-        // std::cout << rawMessage << std::endl;
         size_t prefixEnd = 0;
         if (rawMessage[0] == ':') {
             prefixEnd = rawMessage.find(' ');
@@ -35,12 +34,9 @@ void Message::parse()
         size_t commandEnd = rawMessage.find(' ', prefixEnd);
         rawCmd = rawMessage.substr(prefixEnd, commandEnd - prefixEnd);
         command = assignCommand(rawCmd);
-        // if (command == IRCCommand::ERROR)
-        //     throw something maybe
         size_t start = commandEnd + 1;
 
         while (start < rawMessage.length()) {
-            // std::cout << "start is: " << start << std::endl;
             size_t end;
             if (rawMessage[start] == ':') {
                 end = rawMessage.length(); // ':' indicates always end of message so ':' to last character is last parameter
