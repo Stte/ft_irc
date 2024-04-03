@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Message.hpp"
 
 // PASS command
 void Server::pass(std::string pass, int fd)

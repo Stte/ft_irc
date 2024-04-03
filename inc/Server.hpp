@@ -16,7 +16,6 @@
 #include <csignal>
 #include <cstring>
 #include "Replays.hpp"
-#include "Message.hpp"
 #include "Channel.hpp"
 #include <memory>
 #include <map>
@@ -36,6 +35,7 @@ enum rType
 
 class Client;
 class Channel;
+class Message;
 class Server
 {
 private:

@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Message.hpp"
 
 // Static variable
 bool Server::signal = false;
