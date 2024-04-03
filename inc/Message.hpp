@@ -14,7 +14,6 @@ enum IRCCommand {
     USER,
     PASS,
     CAP,
-    MOTD,
     MODE,
     KICK,
     PING,
