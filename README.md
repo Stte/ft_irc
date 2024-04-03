@@ -11,7 +11,6 @@ To get started with this project, you'll need to have a C++ compiler. The projec
 - C++ compiler (e.g., g++)
 - Terminal or command prompt
 - [Download and install](https://irssi.org/download/) Irssi as your client
-- For using the bot `pip3 install requests`
 
 ### Building the Project
 
@@ -112,10 +111,10 @@ Used to leave a channel. Replace `channelname` with the name of the channel.
 
 ### Using the Bot
 
-The `bot.py` script is a simple IRC bot that can join channels, respond to messages, and fetch random quotes from the Game of Thrones.
+The `bot.py` script is a simple IRC bot that can join channels, respond to messages, and fetch random quotes. **only works on localhost.**
 
 1. Ensure you have Python3 installed.
-2. Run the bot script by typing `python3 bot.py` in your terminal.
+2. Run the bot script by typing `python3 bot.py -p <port> -pw <password>` in your terminal.
 3. The bot will connect to the server and join a channel. You can interact with it by sending messages in the channel.
 
 ## Contributors

@@ -1,11 +1,19 @@
 #!/usr/bin/python3
 
-import socket, requests
+import socket
+import argparse
+
+parser = argparse.ArgumentParser(description='IRC Bot')
+
+parser.add_argument('-p', type=int, required=True, help='Port to connect to')
+parser.add_argument('-pw', type=str, required=True, help='Password for the server')
+
+args = parser.parse_args()
 
 botnick = "Spoof"
 server = "localhost"
-port = 6667
-password = "asd"
+port = args.p
+password = args.pw
 
 global IRC
 IRC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,20 +31,10 @@ def sendmsg(msg, channel):
 def joinchan(chan):
 	IRC.send(("JOIN "+ chan +"\r\n").encode('utf-8'))
 	IRC.send(("PRIVMSG "+ chan +" :Hello! I am a bot.\r\n").encode('utf-8'))
-	IRC.send(("PRIVMSG "+ chan +" :Type !quote to get a random Game of Thrones quote.\r\n").encode('utf-8'))
+	IRC.send(("PRIVMSG "+ chan +" :Type !quote to get a random quote.\r\n").encode('utf-8'))
 
 def send_data(message):
 	IRC.send((message + '\r\n').encode('utf-8'))
-
-def generate_quote():
-	response = requests.get("https://api.gameofthronesquotes.xyz/v1/random")
-	if response.status_code == 200:
-		data = response.json()
-		quote = data['sentence']
-		character = data['character']['name']
-		return f'"{quote}" - {character}'
-	else:
-		return 'Failed to fetch a quote'
 
 def main():
 	while (1):
@@ -51,7 +49,7 @@ def main():
 			channel = ircmsg.split('PRIVMSG',1)[1].split(':',1)[0].strip()
 			message = ircmsg.split('PRIVMSG',1)[1].split(':',1)[1].strip()
 			if (message.find('!quote') != -1):
-				sendmsg(generate_quote(), channel)
+				sendmsg("Insanity is doing the same thing over and over again and expecting different results.", channel)
 
 if __name__=="__main__":
 	main()
