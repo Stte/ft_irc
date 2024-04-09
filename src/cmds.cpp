@@ -315,19 +315,11 @@ void Server::kick(Message &cmd, int fd)
 		return;
 	}
 	Channel *kick_ch = channels[cmd.getParams().front()];
-	size_t a = 1;
-	size_t b = 1;
-	for (auto e : kick_ch->get_ops())
-	{
-		a++;
-		if (e->get_nickname() == cmd.getParams()[1])
-			b++;
-	}
-	if (a == b)
-	{
-		//add error cannot_remove only op
-		return ;
-	}
+	// auto operators  = kick_ch->get_ops();
+	// if (operators.size() == 1 && operators.front()->get_nickname() == cmd.getParams()[1])
+	// {
+	// 	// error
+	// }
 	if (cmd.getParams().size() > 2)
 	{
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
