@@ -33,12 +33,10 @@ void Server::create_server_socket()
 	if (this->server_socket == -1)							// check if created
 		throw(std::runtime_error("failed to create socket"));
 	optset = 0;
-	if (setsockopt(this->server_socket, IPPROTO_IPV6, IPV6_V6ONLY, &optset,
-				   sizeof(optset)) == -1) // Set the IPV6_V6ONLY option to 0 to allow ipv4 (dual-stack socket)
+	if (setsockopt(this->server_socket, IPPROTO_IPV6, IPV6_V6ONLY, &optset, sizeof(optset)) == -1) // Set the IPV6_V6ONLY option to 0 to allow ipv4 (dual-stack socket)
 		throw(std::runtime_error("failed to set IPV6_V6ONLY option"));
 	optset = 1;
-	if (setsockopt(this->server_socket, SOL_SOCKET, SO_REUSEADDR, &optset,
-				   sizeof(optset)) == -1) // Set the SO_REUSEADDR option to allow the socket to reuse the address
+	if (setsockopt(this->server_socket, SOL_SOCKET, SO_REUSEADDR, &optset,sizeof(optset)) == -1) // Set the SO_REUSEADDR option to allow the socket to reuse the address
 		throw(std::runtime_error("failed to set option (SO_REUSEADDR) on socket"));
 	if (fcntl(this->server_socket, F_SETFL, O_NONBLOCK) == -1) // set the socket option (O_NONBLOCK) for non-blocking socket
 		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));

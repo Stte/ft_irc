@@ -334,4 +334,5 @@ void Server::kick(Message &cmd, int fd)
 	}
 	else
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1]);
+	user->remove_channel(kick_ch);
 }
