@@ -315,11 +315,6 @@ void Server::kick(Message &cmd, int fd)
 		return;
 	}
 	Channel *kick_ch = channels[cmd.getParams().front()];
-	// auto operators  = kick_ch->get_ops();
-	// if (operators.size() == 1 && operators.front()->get_nickname() == cmd.getParams()[1])
-	// {
-	// 	// error
-	// }
 	if (cmd.getParams().size() > 2)
 	{
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
