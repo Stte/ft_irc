@@ -40,7 +40,6 @@ void Server::remove_client(int fd)
 }
 void Server::remove_channel(Channel *channel)
 {
-	std::cout << channel->get_channel_name() << " channel removed!" << std::endl;
 	this->channels.erase(channel->get_channel_name());
 	delete channel;
 }

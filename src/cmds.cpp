@@ -135,9 +135,12 @@ void Server::quit(int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 	Client *client = get_client(fd);
-	for (auto &channel : client->get_channels())
+	if (client->get_channels().size() > 0)
 	{
-		channel->quit(client);
+		for (auto &channel : client->get_channels())
+		{
+			channel->quit(client);
+		}
 	}
 	this->remove_client(fd);
 	close(fd);
@@ -147,19 +150,22 @@ void Server::quit(Message &cmd, int fd)
 {
 	std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 	Client *client = get_client(fd);
-	if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
+	if (client->get_channels().size() > 0)
 	{
-		std::string msg(cmd.getParams().front());
-		for (auto &channel : client->get_channels())
+		if (cmd.getParams().size() > 0 && cmd.getParams()[0][0] == ':')
 		{
-			channel->quit(client, msg);
+			std::string msg(cmd.getParams().front());
+			for (auto &channel : client->get_channels())
+			{
+				channel->quit(client, msg);
+			}
 		}
-	}
-	else
-	{
-		for (auto &channel : client->get_channels())
+		else
 		{
-			channel->quit(client);
+			for (auto &channel : client->get_channels())
+			{
+				channel->quit(client);
+			}
 		}
 	}
 	this->remove_client(fd);
@@ -320,6 +326,10 @@ void Server::kick(Message &cmd, int fd)
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1], cmd.getParams()[2]);
 	}
 	else
+	{
 		channels[cmd.getParams().front()]->kick(user, cmd.getParams()[1]);
-	user->remove_channel(kick_ch);
+	}
+	this->get_client(cmd.getParams()[1])->remove_channel(kick_ch);
+	if (this->channels[cmd.getParams().front()]->is_empty())
+		this->remove_channel(this->channels[cmd.getParams().front()]);
 }

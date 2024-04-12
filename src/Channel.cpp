@@ -80,8 +80,6 @@ void Channel::kick(Client *commander, std::string const &nickname)
 	remove_client(nickname);
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, ""), server.get_client(nickname)->get_fd());
-	if (is_empty())
-		server.remove_channel(this);
 }
 
 void Channel::kick(Client *commander, std::string const &nickname, std::string const &msg)
@@ -99,8 +97,6 @@ void Channel::kick(Client *commander, std::string const &nickname, std::string c
 	remove_client(nickname);
 	broadcast(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg));
 	server.send_response(RPL_KICK(CLIENT(commander->get_nickname(), commander->get_username(), commander->get_IPaddr()), this->name, nickname, msg), server.get_client(nickname)->get_fd());
-	if (is_empty())
-		server.remove_channel(this);
 }
 
 void Channel::mode(Client *commander, int action, char const &mode)
@@ -196,7 +192,7 @@ void Channel::topic(Client *commander, int action, std::string const &topic)
 void Channel::quit(Client *client)
 {
 	std::cout << "Channel quit!" << std::endl;
-	if (get_client(client) == NULL)
+	if (is_client_in_channel(client->get_nickname()) == false)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
 		return;
@@ -209,7 +205,7 @@ void Channel::quit(Client *client)
 void Channel::quit(Client *client, std::string const &msg)
 {
 	std::cout << "Channel quit! msg" << std::endl;
-	if (get_client(client) == NULL)
+	if (is_client_in_channel(client->get_nickname()) == false)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), client->get_fd());
 		return;
@@ -222,7 +218,7 @@ void Channel::quit(Client *client, std::string const &msg)
 
 void Channel::message(Client *sender, std::string const &message)
 {
-	if (get_client(sender) == NULL)
+	if (get_client(sender) == nullptr)
 	{
 		server.send_response(ERR_NOTONCHANNEL(this->name), sender->get_fd());
 		return;
